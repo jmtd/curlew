@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Shell script written to do pascal compilation for MG1 that doesn't
+# know about berkeley pc. One off.
+
+set -x
+
+BASE=`basename $1 .p`
+cc -E $BASE.p | grep -v "^#"  >$BASE.pas
+/users/pprods/pascal $BASE -extend -nowarn
+rm $BASE.pas

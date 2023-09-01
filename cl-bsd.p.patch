@@ -1,0 +1,87 @@
+*** cl-base.p	Tue Mar  1 09:30:31 1994
+--- cl-bsd.p	Tue Mar  1 09:48:36 1994
+***************
+*** 285,291 ****
+   
+      stdin  : filedesc;              { standard input file descriptor }
+      stdout : filedesc;              { standard output file descriptor }
+!     stderr : filedesc;              { standard error file descriptor }
+   
+      initin, initout : filedesc;     { initial standard input & output }
+   
+--- 285,291 ----
+   
+      stdin  : filedesc;              { standard input file descriptor }
+      stdout : filedesc;              { standard output file descriptor }
+!     stderror : filedesc;              { standard error file descriptor }
+   
+      initin, initout : filedesc;     { initial standard input & output }
+   
+***************
+*** 421,427 ****
+   
+      stdin := 0;                 { standard input }
+      stdout := 1;                { standard output }
+!     stderr := 2;                { standard error }
+   
+      initin := stdin;  initout := stdout;    { save values }
+   
+--- 421,427 ----
+   
+      stdin := 0;                 { standard input }
+      stdout := 1;                { standard output }
+!     stderror := 2;                { standard error }
+   
+      initin := stdin;  initout := stdout;    { save values }
+   
+***************
+*** 2563,2569 ****
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot open file@n&  ');
+!         putstr(s, stderr);
+          errorexit
+      end;
+      mustopen := fd
+--- 2563,2569 ----
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot open file@n&  ');
+!         putstr(s, stderror);
+          errorexit
+      end;
+      mustopen := fd
+***************
+*** 2583,2589 ****
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot create file@n&');
+!         putstr(s, stderr);
+          errorexit
+      end;
+      mustcreate := fd
+--- 2583,2589 ----
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot create file@n&');
+!         putstr(s, stderror);
+          errorexit
+      end;
+      mustcreate := fd
+***************
+*** 10155,10161 ****
+          setstring(lin, '*** Curlew can only be u');
+          appstring(lin, 'sed from a terminal whic');
+          appstring(lin, 'h supports SSMP.@n&     ');
+!         putstr(lin, stderr)
+      end
+  end;  {editor}
+   
+--- 10155,10161 ----
+          setstring(lin, '*** Curlew can only be u');
+          appstring(lin, 'sed from a terminal whic');
+          appstring(lin, 'h supports SSMP.@n&     ');
+!         putstr(lin, stderror)
+      end
+  end;  {editor}
+   

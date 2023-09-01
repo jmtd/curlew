@@ -1,0 +1,2801 @@
+*** cl-base.p	Tue Mar  1 09:30:31 1994
+--- cl-sun.p	Tue Mar  8 16:16:55 1994
+***************
+*** 1,6 ****
+  program curlew;
+   
+! { %% Source generation dated :  Wed, 04 May 88  12:19:09 BST  %%%%%%% }
+   
+   
+  { ****************************************************** curlew ***** }
+--- 1,6 ----
+  program curlew;
+   
+! { %% Source generation dated :  Wed, 04 May 88  13:37:49 BST  %%%%%%% }
+   
+   
+  { ****************************************************** curlew ***** }
+***************
+*** 10,18 ****
+  { ******************************************************************* }
+   
+   
+! { %%%%%% update %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% cl-bsd %%%%% }
+  { %                                                                 % }
+! { %     Updated for the UNIX time-sharing system, release 4.3bsd    % }
+  { %     UNIX is a trademark of A.T.&T. Bell Laboratories, U.S.A.    % }
+  { %                                                                 % }
+  { %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% }
+--- 10,19 ----
+  { ******************************************************************* }
+   
+   
+! { %%%%%% update %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% cl-sun %%%%% }
+  { %                                                                 % }
+! { %     Updated for the UNIX time-sharing system, release 4.2bsd    % }
+! { %     running on a SUN workstation.                               % }
+  { %     UNIX is a trademark of A.T.&T. Bell Laboratories, U.S.A.    % }
+  { %                                                                 % }
+  { %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% }
+***************
+*** 228,236 ****
+      fdpointer = integer;
+   
+   
+! { ****************************************************** ssmptype *** }
+  { *                                                                 * }
+! { *                SSMP shared data structure types                 * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+--- 229,237 ----
+      fdpointer = integer;
+   
+   
+! { ****************************************************** lunixtyp *** }
+  { *                                                                 * }
+! { *     SSMP shared data structure types -- local UNIX version      * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+***************
+*** 238,243 ****
+--- 239,245 ----
+      toktype = (withhost, withterm);
+      rowtype = 0..zmaxrow;               { in use, 0..maxrow }
+      coltype = 0..zmaxcol;               { in use, 0..maxcol }
++     imtype  = array[rowtype,coltype] of isochar;
+   
+      savedfield =                        { each stored field definition }
+          record
+***************
+*** 253,259 ****
+      tabstop    = (notab, tabset);       { tabulation stop }
+   
+   
+! { ****************************************************** ssmptype *** }
+  { *                                                                 * }
+  { *          SSMP network encoding and transmission types           * }
+  { *                                                                 * }
+--- 255,261 ----
+      tabstop    = (notab, tabset);       { tabulation stop }
+   
+   
+! { ****************************************************** lssmptyp *** }
+  { *                                                                 * }
+  { *          SSMP network encoding and transmission types           * }
+  { *                                                                 * }
+***************
+*** 262,271 ****
+   
+      charstr = packed array [1..16] of isochar;
+      charlen = 0..16;
+      primpar = array [1..4] of smallint;
+      rowtext = array [coltype] of isochar;
+      ncftype = (nocf, csrpend, fldpend);
+-     treqtype = (notkreq, needtok, expecttok);
+   
+   
+  var
+--- 264,273 ----
+   
+      charstr = packed array [1..16] of isochar;
+      charlen = 0..16;
++     netbuff = packed array [1..256] of isochar;
+      primpar = array [1..4] of smallint;
+      rowtext = array [coltype] of isochar;
+      ncftype = (nocf, csrpend, fldpend);
+   
+   
+  var
+***************
+*** 285,291 ****
+   
+      stdin  : filedesc;              { standard input file descriptor }
+      stdout : filedesc;              { standard output file descriptor }
+!     stderr : filedesc;              { standard error file descriptor }
+   
+      initin, initout : filedesc;     { initial standard input & output }
+   
+--- 287,293 ----
+   
+      stdin  : filedesc;              { standard input file descriptor }
+      stdout : filedesc;              { standard output file descriptor }
+!     stderror : filedesc;              { standard error file descriptor }
+   
+      initin, initout : filedesc;     { initial standard input & output }
+   
+***************
+*** 310,318 ****
+      cssinit : boolean;              { pattern start anycase state }
+   
+   
+! { ****************************************************** ssmpvar **** }
+  { *                                                                 * }
+! { *               SSMP shared data structure variables              * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+--- 312,320 ----
+      cssinit : boolean;              { pattern start anycase state }
+   
+   
+! { ****************************************************** lunixvar *** }
+  { *                                                                 * }
+! { *   SSMP shared data structure variables -- local UNIX version    * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+***************
+*** 321,328 ****
+      row   : rowtype;                    { cursor row }
+      col   : coltype;                    { cursor column }
+   
+!     image : packed array [rowtype,coltype]
+!                         of isochar;     { screen image }
+   
+      curfield, maxfield : fieldindex;
+      field : array [fieldindex]
+--- 323,329 ----
+      row   : rowtype;                    { cursor row }
+      col   : coltype;                    { cursor column }
+   
+!     image : imtype;                     { screen image }
+   
+      curfield, maxfield : fieldindex;
+      field : array [fieldindex]
+***************
+*** 334,342 ****
+      tabs  : array [coltype] of tabstop; { tabulation stops array }
+   
+   
+! { ****************************************************** ssmpvar **** }
+  { *                                                                 * }
+! { *         SSMP network encoding and transmission variables        * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+--- 335,343 ----
+      tabs  : array [coltype] of tabstop; { tabulation stops array }
+   
+   
+! { ****************************************************** lssmpvar *** }
+  { *                                                                 * }
+! { *           SSMP local action virtual terminal variables          * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+***************
+*** 344,366 ****
+      ssmplocn : integer;           { network environment pointer }
+      masterlevel : smallint;       { session level after negotiation }
+      repainted : boolean;          { true if screen refreshed }
+-     treqstate : treqtype;         { state of H-REQTOKEN processing }
+-     ssmpstate : isochar;          { parser state }
+-     tparidx, tsum : integer;      { used in parameter decoding }
+-     gotdigit : boolean;           { used in parameter decoding }
+-     tprid : isochar;              { returned prim id (star=character) }
+-     tpars : primpar;              { returned primitive parameters }
+      cfstate : ncftype;            { setcursor/setfield optimisation }
+   
+!     filter : itable;              { filter input and strip parity }
+!     encode, decode : itable;      { iso to/from ssmp conversions }
+   
+!     inbuff, outbuff : chstring;   { input and output frame buffers }
+!     inlen : integer;              { characters in input buffer }
+!     inptr, outptr : integer;      { buffer pointers }
+!     framenbr : integer;           { index of output frame in packet }
+!     mxframenbr : integer;         { ... and this the maximum }
+!     outremdr : integer;           { characters available in frame }
+   
+   
+  #include "st.h"
+--- 345,360 ----
+      ssmplocn : integer;           { network environment pointer }
+      masterlevel : smallint;       { session level after negotiation }
+      repainted : boolean;          { true if screen refreshed }
+      cfstate : ncftype;            { setcursor/setfield optimisation }
++     escaped : boolean;            { true if previous keystroke was ESC }
++     defer : boolean;              { true to stop t-?s changing image }
+   
+!     nqueued : integer;            { number of t-primitives on queue }
+!     qpcode : array [1..8] of isochar;   { primitive q : code }
+!     qpar1 : array [1..8] of smallint;   { primitive q : par one }
+!     qpar2 : array [1..8] of smallint;   { primitive q : par two }
+   
+!     filter : itable;              { strip parity table }
+   
+   
+  #include "st.h"
+***************
+*** 421,427 ****
+   
+      stdin := 0;                 { standard input }
+      stdout := 1;                { standard output }
+!     stderr := 2;                { standard error }
+   
+      initin := stdin;  initout := stdout;    { save values }
+   
+--- 415,421 ----
+   
+      stdin := 0;                 { standard input }
+      stdout := 1;                { standard output }
+!     stderror := 2;                { standard error }
+   
+      initin := stdin;  initout := stdout;    { save values }
+   
+***************
+*** 700,715 ****
+  begin
+      SLOGUSE(envlocn, name);
+  end;  {loguse}
+   
+   
+! { ****************************************************** ssmprtn **** }
+  { *                                                                 * }
+! { *        SSMP :: Host virtual terminal service routines           * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+   
+! { ****************************************************** ssmprtn **** }
+  { *                                                                 * }
+  { *   All SSMP service procedures are defined here.  If this        * }
+  { *   section is split into a separate module, the procedures and   * }
+--- 694,710 ----
+  begin
+      SLOGUSE(envlocn, name);
+  end;  {loguse}
++ #include "tp.h"
+   
+   
+! { ****************************************************** lunixrtn *** }
+  { *                                                                 * }
+! { *   SSMP :: UNIX local action virtual terminal service routines   * }
+  { *                                                                 * }
+  { ******************************************************************* }
+   
+   
+! { ****************************************************** lssmprtn *** }
+  { *                                                                 * }
+  { *   All SSMP service procedures are defined here.  If this        * }
+  { *   section is split into a separate module, the procedures and   * }
+***************
+*** 721,727 ****
+  { ******************************************************************* }
+   
+   
+! { ****************************************************** ssmprtn **** }
+  { *                                                                 * }
+  { *         General description of the SSMP host routines           * }
+  { *         ---------------------------------------------           * }
+--- 716,722 ----
+  { ******************************************************************* }
+   
+   
+! { ****************************************************** lssmprtn *** }
+  { *                                                                 * }
+  { *         General description of the SSMP host routines           * }
+  { *         ---------------------------------------------           * }
+***************
+*** 752,758 ****
+  { *      erasetabs    : H-ERASETABS to erase all tabulation stops   * }
+  { *      settab       : H-SETTAB to set one tabulation stop         * }
+  { *      session      : H-SESSION to enter or exit session          * }
+! { *      reqtoken     : H-REQTOKEN if no token by end of frame      * }
+  { *                                                                 * }
+  { *   The following procedures allow interrogation of the shared    * }
+  { *   data structure variables.  Use of functions and procedures    * }
+--- 747,753 ----
+  { *      erasetabs    : H-ERASETABS to erase all tabulation stops   * }
+  { *      settab       : H-SETTAB to set one tabulation stop         * }
+  { *      session      : H-SESSION to enter or exit session          * }
+! { *      reqtoken     : H-REQTOKEN to request early return of token * }
+  { *                                                                 * }
+  { *   The following procedures allow interrogation of the shared    * }
+  { *   data structure variables.  Use of functions and procedures    * }
+***************
+*** 841,912 ****
+  { ******************************************************************* }
+   
+   
+! { initcoding -- initialise tables for SSMP primitive encoding }
+  procedure initcoding;
+  var
+      j : smallint;
+-     s : chstring;
+  begin
+      { i/o system and session initialisation }
+      masterlevel := 0;
+-     outremdr := 0;  outptr := 0;
+-     framenbr := 1;
+-     getinf(maxframe, s, maxstr);            { ssmp frames/packet }
+-     if s[1] = endstr then
+-         mxframenbr := 2                        { the safe value }
+-     else
+-     begin
+-         mxframenbr := s[1] - dig0;
+-         if (mxframenbr < 1) or (mxframenbr > 7) then
+-             mxframenbr := 2
+-     end;
+-  
+      cfstate := nocf;
+-     ssmpstate := nul;
+-     treqstate := notkreq;
+      repainted := false;
+   
+!     { input filter table to pass valid characters and strip parity }
+      for j := 0 to 127 do
+-         filter[j] := nul;
+-     filter[blank] := blank;
+-     for j := lparen to semicol do
+-         filter[j] := j;
+-     filter[equals] := equals;
+-     for j := capa to capz do
+      begin
+!         filter[j] := j;  filter[j+32] := j+32
+!     end;
+!     for j := 0 to 127 do
+!         filter[j+128] := filter[j];
+!  
+!     { decoding table for incoming T-CHARACTER primitives }
+!     for j := 0 to 127 do
+!     begin
+!        decode[j] := 32;
+!        encode[j] := 32
+!     end;
+!  
+!     decode[48] := 0;
+!     for j := 0 to 25 do
+!         decode[65+j]  := j + 1;
+!     for j := 0 to 4  do
+!         decode[49+j]  := j + 27;
+!     for j := 0 to 6  do
+!         decode[97+j]  := j + 33;
+!     for j := 0 to 5  do
+!         decode[104+j] := j + 58;
+!     decode[110] := 64;
+!     for j := 0 to 4  do
+!         decode[111+j] := j + 91;
+!     decode[116] := 96;
+!     for j := 0 to 4  do
+!         decode[117+j] := j + 123;
+!  
+!     { encoding table for generating H-CHARACTER primitives }
+!     for j := 0 to 127 do
+!         encode[decode[j]] := j;
+!     encode[32] := 32
+  end;  {initcoding}
+   
+   
+--- 836,860 ----
+  { ******************************************************************* }
+   
+   
+! { initcoding -- initialise tables for SSMP primitive processing }
+  procedure initcoding;
+  var
+      j : smallint;
+  begin
+      { i/o system and session initialisation }
+      masterlevel := 0;
+      cfstate := nocf;
+      repainted := false;
++     escaped := false;
++     defer := false;
++     nqueued := 0;
+   
+!     { input filter table to strip parity }
+      for j := 0 to 127 do
+      begin
+!         filter[j] := j;
+!         filter[j+128] := j
+!     end
+  end;  {initcoding}
+   
+   
+***************
+*** 950,1093 ****
+  end;  {initshared}
+   
+   
+- { netread -- get next frame from network }
+- procedure netread;
+- var
+-     j : integer;
+- begin
+-     if not getline(inbuff, stdin, maxstr) then
+-         inbuff[1] := endstr;
+-     j := 1;  inptr := 0;
+-     while inbuff[j] <> endstr do
+-         j := j + 1;
+-     inlen := j - 1;
+-     if inlen < 4 then
+-         for j := inlen+1 to 4 do
+-             inbuff[j] := isospace
+- end;  {netread}
+-  
+-  
+- { netwrite -- output assembled frames to the network }
+- procedure netwrite;
+- begin
+-     outbuff[outptr+1] := endstr;
+-     putstr(outbuff, stdout)
+- end;  {netwrite}
+-  
+-  
+- { endframe -- end current output frame }
+- procedure endframe;
+- begin
+-     if outptr > 0 then
+-     begin
+-         if outbuff[outptr] = isospace then
+-         begin                           { foil trailing space trim }
+-             outbuff[outptr+1] := dollar;
+-             outptr := outptr + 1
+-         end;
+-         outbuff[outptr+1] := ctlm;
+-         outbuff[outptr+2] := ctlj;
+-         outptr := outptr + 2;
+-         if framenbr < mxframenbr then
+-             framenbr := framenbr + 1
+-         else
+-         begin
+-             netwrite;
+-             framenbr := 1;
+-             outptr := 0
+-         end
+-     end;
+-     outremdr := 0
+- end;  {endframe}
+-  
+-  
+- { pushframe -- push frame(s) to network }
+- procedure pushframe;
+- begin
+-     endframe;
+-     if outptr > 0 then
+-     begin
+-         netwrite;
+-         framenbr := 1;
+-         outptr := 0
+-     end
+- end;  {pushframe}
+-  
+-  
+- { assemble -- encode host SSMP primitive and add to output frame }
+- procedure assemble (primid : isochar;
+-                     npars : smallint;
+-                     pars : primpar);
+- var
+-     pstr, istr : charstr;
+-     plen, ilen, chindex : charlen;
+-     pindex, jindex, itemp : smallint;
+- begin
+-     if primid = star then
+-     begin                               { H-CHARACTER }
+-         itemp := encode[pars[1]];
+-         plen := 1;
+-         if itemp = blank then
+-             pstr[1] := pars[1]
+-         else
+-         begin  { escaped set }
+-             pstr[1] := colon;
+-             pstr[2] := itemp;
+-             plen := 2
+-         end
+-     end
+-     else
+-     begin                               { not H-CHARACTER }
+-         pstr[1] := equals;
+-         pstr[2] := primid;
+-         plen := 2;
+-         if npars = 0 then
+-             plen := 3
+-         else
+-         for pindex := 1 to npars do
+-         begin
+-             itemp := pars[pindex];  ilen := 0;
+-             while itemp>0 do
+-             begin
+-                 ilen := ilen + 1;
+-                 istr[16-ilen] := (itemp mod 10) + dig0;
+-                 itemp := itemp div 10
+-             end;
+-             if ilen=0 then
+-             begin
+-                 ilen := 1;  istr[15] := dig0;
+-             end;
+-             for jindex := ilen downto 1 do
+-             begin
+-                 plen := plen + 1;  pstr[plen] := istr[16-jindex]
+-             end;
+-             plen := plen + 1;
+-             pstr[plen] := comma
+-         end;
+-         pstr[plen] := semicol
+-     end;
+-  
+-     { add encoded primitive to output frame }
+-     for chindex := 1 to plen do
+-     begin
+-         if outremdr = 0 then
+-         begin
+-             endframe;
+-             outptr := outptr + 1;
+-             outbuff[outptr] := ctlk;
+-             outremdr := framesize
+-         end;
+-         outptr := outptr + 1;
+-         outbuff[outptr] := pstr[chindex];
+-         outremdr := outremdr - 1
+-     end
+- end;  {assemble}
+-  
+-  
+  { cftest -- issues pending H-SETCURSOR or H-SETFIELD as necessary }
+  procedure cftest (newcfstate : ncftype);
+- var
+-     ppar : primpar;
+  begin
+      if newcfstate <> cfstate then
+      begin
+--- 898,905 ----
+***************
+*** 1097,1111 ****
+              ;
+   
+          csrpend:
+!             begin
+!                 ppar[1] := row;  ppar[2] := col;
+!                 assemble(capb, 2, ppar);
+!             end;
+   
+          fldpend:
+!             begin
+!                 ppar[1] := curfield;  assemble(capl, 1, ppar);
+!             end;
+   
+          end;  {case}
+          cfstate := newcfstate
+--- 909,918 ----
+              ;
+   
+          csrpend:
+!                 USETCURSOR(row, col);
+   
+          fldpend:
+!                 USETCURSOR(row, col);
+   
+          end;  {case}
+          cfstate := newcfstate
+***************
+*** 1142,1148 ****
+      ctemp : coltype;
+  begin
+      for ctemp := cola to colb do
+!         image[rowa,ctemp] := isospace
+  end;  {eraserow}
+   
+   
+--- 949,957 ----
+      ctemp : coltype;
+  begin
+      for ctemp := cola to colb do
+!         image[rowa,ctemp] := isospace;
+!     UERASEROW(rowa, cola, colb);
+!     USETCURSOR(row, col);
+  end;  {eraserow}
+   
+   
+***************
+*** 1168,1174 ****
+      ctemp : coltype;
+  begin
+      for ctemp := cola to colb do
+!         image[rowb,ctemp] := image[rowa,ctemp]
+  end;  {rowcopy}
+   
+   
+--- 977,985 ----
+      ctemp : coltype;
+  begin
+      for ctemp := cola to colb do
+!         image[rowb,ctemp] := image[rowa,ctemp];
+!     UROWCOPY(rowa, rowb, cola, colb);
+!     USETCURSOR(row, col);
+  end;  {rowcopy}
+   
+   
+***************
+*** 1184,1193 ****
+          eraserow(rowa, cola, colb)
+      else
+      begin
+          for ctemp := colb - ncols downto cola do
+              image[rowa,ctemp+ncols] := image[rowa,ctemp];
+!         eraserow(rowa, cola, cola+ncols-1)
+!     end
+  end;  {rightshift}
+   
+   
+--- 995,1007 ----
+          eraserow(rowa, cola, colb)
+      else
+      begin
++         URIGHTSHIFT(rowa, cola, colb, ncols);
+          for ctemp := colb - ncols downto cola do
+              image[rowa,ctemp+ncols] := image[rowa,ctemp];
+!         for ctemp := cola to (cola + ncols - 1) do
+!             image[rowa,ctemp] := isospace;
+!     end;
+!     USETCURSOR(row, col);
+  end;  {rightshift}
+   
+   
+***************
+*** 1203,1242 ****
+          eraserow(rowa, cola, colb)
+      else
+      begin
+          for ctemp := cola + ncols to colb do
+              image[rowa,ctemp-ncols] := image[rowa,ctemp];
+!         eraserow(rowa, colb-ncols+1, colb)
+!     end
+  end;  {leftshift}
+   
+   
+! { textchar -- generate H-CHARACTER to send text }
+  procedure textchar (ch : isochar);
+- var
+-     ppar : primpar;
+-     dspch : isochar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+!     if ch > del
+!         then dspch := grave     { not in ISO 646 -> display grave }
+!         else dspch := ch;
+!     ppar[1] := dspch;
+!     assemble(star, 1, ppar);
+      image[row,col] := ch;
+      if col < maxcol then
+          col := col + 1
+  end;  {textchar}
+   
+   
+! { sendtoken -- generate H-TOKEN to transfer token }
+  procedure sendtoken (reqcode : smallint);
+- var
+-     ppar : primpar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+-     ppar[1] := reqcode;         { token code, 0 or 1 }
+-     assemble(capa, 1, ppar);
+-     pushframe;                  { H-TOKEN ends frame }
+      if mode[cursor] = 0 then
+      begin                       { bound cursor }
+          if (row < boxtop) or (row > boxbottom)
+--- 1017,1066 ----
+          eraserow(rowa, cola, colb)
+      else
+      begin
++         ULEFTSHIFT(rowa, cola, colb, ncols);
+          for ctemp := cola + ncols to colb do
+              image[rowa,ctemp-ncols] := image[rowa,ctemp];
+!         for ctemp := (colb - ncols + 1) to colb do
+!             image[rowa,ctemp] := isospace
+!     end;
+!     USETCURSOR(row, col);
+  end;  {leftshift}
+   
+   
+! { queueprim -- queue t-primitive for later evaluation }
+! procedure queueprim (pcode : isochar;
+!                      par1 : smallint;
+!                      par2 : smallint);
+! begin
+!     nqueued := nqueued + 1;
+!     if (nqueued > 1) and (pcode = capb) then
+!         if qpcode[nqueued-1] = capb then
+!             nqueued := nqueued - 1;
+!     qpcode[nqueued] := pcode;
+!     qpar1[nqueued] := par1;
+!     qpar2[nqueued] := par2
+! end;  {queueprim}
+!  
+!  
+! { textchar -- action of H-CHARACTER to send text }
+  procedure textchar (ch : isochar);
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+!     UCHAR(ch);
+      image[row,col] := ch;
+      if col < maxcol then
+          col := col + 1
++     else
++         { set the cursor back - }
++         { - the cursor move done was wrong anyway }
++         USETCURSOR(row, col);
+  end;  {textchar}
+   
+   
+! { sendtoken -- action of H-TOKEN to transfer token }
+  procedure sendtoken (reqcode : smallint);
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+      if mode[cursor] = 0 then
+      begin                       { bound cursor }
+          if (row < boxtop) or (row > boxbottom)
+***************
+*** 1247,1402 ****
+          end
+      end;
+      mode[tlevel] := 0;          { check this on token return }
+!     token := withterm           { control with terminal emulation }
+  end;  {sendtoken}
+   
+   
+! { setcursor -- generate H-SETCURSOR to set the cursor position }
+  procedure setcursor (newrow : rowtype;
+                       newcol : coltype);
+  begin
+      cftest(csrpend);        { flush any H-SETFIELD, defer H-SETCURSOR }
+      row := newrow;
+!     col := newcol
+  end;  {setcursor}
+   
+   
+! { setmode -- generate H-SETMODE to set a mode array element value }
+  procedure setmode (index : modeindex;
+                     ivalue : smallint);
+  var
+!     ppar : primpar;
+  begin
+!     ppar[1] := index;           { element index number }
+!     ppar[2] := ivalue;          { new value }
+!     assemble(capc, 2, ppar);
+!     mode[index] := ivalue
+  end;  {setmode}
+   
+   
+! { erasetoright -- generate H-ERASETORIGHT to erase to end of row }
+  procedure erasetoright;
+- var
+-     ppar : primpar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+-     ppar[1] := nul;
+-     assemble(capd, 0, ppar);
+      eraserow(row, col, maxcol)
+  end;  {erasetoright}
+   
+   
+! { insertspace -- generate H-INSERTSPACE to insert SPACE characters }
+  procedure insertspace (nsp : smallint);
+  var
+!     ppar : primpar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+-     ppar[1] := nsp;             { number of space characters }
+-     assemble(cape, 1, ppar);
+      if mode[reqshift] = 1 then
+!         rightshift(row, col, maxcol, nsp)
+  end;  {insertspace}
+   
+   
+! { deletechar -- generate H-DELETECHAR to delete characters }
+  procedure deletechar (nch : smallint);
+- var
+-     ppar : primpar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+-     ppar[1] := nch;             { number of characters }
+-     assemble(capf, 1, ppar);
+      if mode[reqshift] = 1 then
+          leftshift(row, col, maxcol, nch)
+  end;  {deletechar}
+   
+   
+! { soundalarm -- generate H-SOUNDALARM to sound the audible alarm }
+  procedure soundalarm;
+- var
+-     ppar : primpar;
+  begin
+!     ppar[1] := nul;
+!     assemble(capg, 0, ppar)
+  end;  {soundalarm}
+   
+   
+! { scrollup -- generate H-SCROLLUP to scroll rows up }
+  procedure scrollup (rowa : rowtype;
+                      rowb : rowtype;
+                      nrows : smallint);
+  var
+      rtemp : rowtype;
+!     ppar : primpar;
+  begin
+!     ppar[1] := rowa;            { upper row }
+!     ppar[2] := rowb;            { lower row }
+!     ppar[3] := nrows;           { number of rows to scroll }
+!     assemble(caph, 3, ppar);
+!     if (rowb-rowa) < nrows then
+!         erasebox(rowa, rowb, 0, maxcol)
+!     else
+      begin
+!         for rtemp := rowa+nrows to rowb do
+!             rowcopy(rtemp, rtemp-nrows, 0, maxcol);
+!         erasebox(rowb-nrows+1, rowb, 0, maxcol)
+!     end
+  end;  {scrollup}
+   
+   
+! { scrolldown -- generate H-SCROLLDOWN to scroll rows down }
+  procedure scrolldown (rowa : rowtype;
+                        rowb : rowtype;
+                        nrows : smallint);
+  var
+      rtemp : rowtype;
+!     ppar : primpar;
+  begin
+!     ppar[1] := rowa;            { upper row }
+!     ppar[2] := rowb;            { lower row }
+!     ppar[3] := nrows;           { number of rows to scroll }
+!     assemble(capi, 3, ppar);
+!     if (rowb-rowa) < nrows then
+!         erasebox(rowa, rowb, 0, maxcol)
+!     else
+      begin
+!         for rtemp := rowb-nrows downto rowa do
+!             rowcopy(rtemp, rtemp+nrows, 0, maxcol);
+!         erasebox(rowa, rowa+nrows-1, 0, maxcol)
+!     end
+  end;  {scrolldown}
+   
+!  
+! { erasedisplay -- generate H-ERASEDISPLAY to erase screen image }
+  procedure erasedisplay;
+- var
+-     ppar : primpar;
+  begin
+      if cfstate = csrpend then
+          cfstate := nocf         { implied cursor movement to [0,0] }
+      else
+          cftest(nocf);           { flush any H-SETFIELD }
+-     ppar[1] := nul;
+-     assemble(capj, 0, ppar);
+      erasebox(0, maxrow, 0, maxcol);
+      row := 0;
+!     col := 0
+  end;  {erasedisplay}
+   
+   
+! { erasefields -- generate H-ERASEFIELDS to erase all field defns }
+  procedure erasefields;
+  var
+      ftemp : fieldindex;
+-     ppar : primpar;
+  begin
+      if cfstate = fldpend then
+          cfstate := nocf         { implicit selection of field zero }
+      else
+          cftest(nocf);           { flush any H-SETCURSOR }
+-     ppar[1] := nul;
+-     assemble(capk, 0, ppar);
+      curfield := 0;
+      maxfield := 0;
+      for ftemp := 0 to fieldlimit do
+--- 1071,1274 ----
+          end
+      end;
+      mode[tlevel] := 0;          { check this on token return }
+!     queueprim(capc, tlevel, masterlevel);   { queue T-SETMODE }
+!     if reqcode = 1 then
+!         queueprim(capa, 0, nul);            { queue T-TOKEN }
+!     UTOKEN(0);
+!     token := withterm;          { control with terminal emulation }
+!     USETCURSOR(row, col)
+  end;  {sendtoken}
+   
+   
+! { setcursor -- action of H-SETCURSOR to set the cursor position }
+  procedure setcursor (newrow : rowtype;
+                       newcol : coltype);
+  begin
+      cftest(csrpend);        { flush any H-SETFIELD, defer H-SETCURSOR }
+      row := newrow;
+!     col := newcol;
+  end;  {setcursor}
+   
+   
+! { setmode -- action of H-SETMODE to set a mode array element value }
+  procedure setmode (index : modeindex;
+                     ivalue : smallint);
+  var
+!     rc : integer;
+  begin
+!     if index > intsignal then
+!     begin
+!         mode[index] := ivalue;
+!     end
+!     else
+!     begin
+!         case index of
+!  
+!         tlevel :
+!             if ivalue > 0 then
+!                 mode[tlevel] := ivalue
+!             else
+!                 queueprim(capc, tlevel, 1);
+!         tmaxrow :
+!             if ivalue <> mode[tmaxrow] then
+!                 queueprim(capc, tmaxrow, mode[tmaxrow]);
+!         tmaxcol :
+!             if ivalue <> mode[tmaxcol] then
+!                 queueprim(capc, tmaxcol, mode[tmaxcol]);
+!         dsinvalid :
+!             mode[dsinvalid] := ivalue;
+!         notify :
+!             mode[notify] := ivalue;
+!         selectgr :
+!             begin
+!                 rc := 0;
+!                 USETMODE(ivalue, rc);
+!                 if rc >= 0 then
+!                     mode[selectgr] := ivalue
+!                 else
+!                     queueprim(capc, selectgr, defrend);
+!             end;
+!         reqshift :
+!             if ivalue < 2 then
+!                 mode[reqshift] := ivalue
+!             else
+!                 queueprim(capc, reqshift, 0);
+!         cursor :
+!             if ivalue < 2 then
+!                 mode[cursor] := ivalue
+!             else
+!                 queueprim(capc, cursor, 0);
+!         icharmode :
+!             if ivalue < 2 then
+!                 mode[icharmode] := ivalue
+!             else
+!                 queueprim(capc, icharmode, 0);
+!         ilinerow :
+!             if ivalue <= mode[tmaxrow] then
+!                 mode[ilinerow] := ivalue
+!             else
+!                 queueprim(capc, ilinerow, mode[ilinerow]);
+!         intsignal :
+!             queueprim(capc, intsignal, 0);
+!         end;
+!     end;
+  end;  {setmode}
+   
+   
+! { erasetoright -- action of H-ERASETORIGHT to erase to end of row }
+  procedure erasetoright;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+      eraserow(row, col, maxcol)
+  end;  {erasetoright}
+   
+   
+! { insertspace -- action of H-INSERTSPACE to insert SPACE characters }
+  procedure insertspace (nsp : smallint);
+  var
+!     count : smallint;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+      if mode[reqshift] = 1 then
+!     begin
+!         rightshift(row, col, maxcol, nsp);
+!         for count := 1 to nsp do
+!             UCHAR(isospace);
+!         USETCURSOR(row, col);
+!     end;
+  end;  {insertspace}
+   
+   
+! { deletechar -- action of H-DELETECHAR to delete characters }
+  procedure deletechar (nch : smallint);
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+      if mode[reqshift] = 1 then
+          leftshift(row, col, maxcol, nch)
+  end;  {deletechar}
+   
+   
+! { soundalarm -- action of H-SOUNDALARM to sound the audible alarm }
+  procedure soundalarm;
+  begin
+!     UALARM;
+  end;  {soundalarm}
+   
+   
+! { scrollup -- action of H-SCROLLUP to scroll rows up }
+  procedure scrollup (rowa : rowtype;
+                      rowb : rowtype;
+                      nrows : smallint);
+  var
+      rtemp : rowtype;
+!     ctemp : coltype;
+  begin
+!     USCROLLUP(rowa, rowb, 0, maxcol, nrows);
+!     for rtemp := rowa to (rowb - nrows) do
+      begin
+!         for ctemp := 0 to maxcol do
+!         begin
+!             image[rtemp,ctemp] := image[(rtemp+nrows),ctemp];
+!         end;
+!     end;
+!     for rtemp := (rowb -nrows + 1) to rowb do
+!     begin
+!         for ctemp := 0 to maxcol do
+!         begin
+!             image[rtemp,ctemp] := isospace;
+!         end;
+!     end;
+  end;  {scrollup}
+   
+   
+! { scrolldown -- action of H-SCROLLDOWN to scroll rows down }
+  procedure scrolldown (rowa : rowtype;
+                        rowb : rowtype;
+                        nrows : smallint);
+  var
+      rtemp : rowtype;
+!     ctemp : coltype;
+  begin
+!     USCROLLDOWN(rowa, rowb, 0, maxcol, nrows);
+!     for rtemp := rowb downto (rowa + nrows) do
+      begin
+!         for ctemp := 0 to maxcol do
+!         begin
+!             image[rtemp,ctemp] := image[(rtemp-nrows),ctemp];
+!         end;
+!     end;
+!     for rtemp := (rowa +nrows - 1) downto rowa do
+!     begin
+!         for ctemp := 0 to maxcol do
+!         begin
+!             image[rtemp,ctemp] := isospace;
+!         end;
+!     end;
+  end;  {scrolldown}
+   
+! { erasedisplay -- action of H-ERASEDISPLAY to erase screen image }
+  procedure erasedisplay;
+  begin
+      if cfstate = csrpend then
+          cfstate := nocf         { implied cursor movement to [0,0] }
+      else
+          cftest(nocf);           { flush any H-SETFIELD }
+      erasebox(0, maxrow, 0, maxcol);
+      row := 0;
+!     col := 0;
+!     USETCURSOR(row, col)
+  end;  {erasedisplay}
+   
+   
+! { erasefields -- action of H-ERASEFIELDS to erase all field defns }
+  procedure erasefields;
+  var
+      ftemp : fieldindex;
+  begin
+      if cfstate = fldpend then
+          cfstate := nocf         { implicit selection of field zero }
+      else
+          cftest(nocf);           { flush any H-SETCURSOR }
+      curfield := 0;
+      maxfield := 0;
+      for ftemp := 0 to fieldlimit do
+***************
+*** 1410,1416 ****
+  end;  {erasefields}
+   
+   
+! { setfield -- generate H-SETFIELD to select new field definition }
+  procedure setfield (fidx : fieldindex);
+  begin
+      cfstate := fldpend;         { suppress any H-SETCURSOR }
+--- 1282,1288 ----
+  end;  {erasefields}
+   
+   
+! { setfield -- action of H-SETFIELD to select new field definition }
+  procedure setfield (fidx : fieldindex);
+  begin
+      cfstate := fldpend;         { suppress any H-SETCURSOR }
+***************
+*** 1422,1445 ****
+          boxtop := fldtop;  boxbottom := fldbottom;
+          boxleft := fldleft;  boxright := fldright
+      end;
+!     row := boxtop;  col := boxleft
+  end;  {setfield}
+   
+   
+! { setupdate -- generate H-SETUPDATE to set update limits for field }
+  procedure setupdate (rowa : rowtype;
+                       rowb : rowtype;
+                       cola : coltype;
+                       colb : coltype);
+- var
+-     ppar : primpar;
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+-     ppar[1] := rowa;            { field upper row }
+-     ppar[2] := rowb;            { field lower row }
+-     ppar[3] := cola;            { field leftmost column }
+-     ppar[4] := colb;            { field rightmost column }
+-     assemble(capm, 4, ppar);
+      with field[curfield] do
+      begin
+          boxtop := rowa;     fldtop := boxtop;
+--- 1294,1310 ----
+          boxtop := fldtop;  boxbottom := fldbottom;
+          boxleft := fldleft;  boxright := fldright
+      end;
+!     row := boxtop;  col := boxleft;
+  end;  {setfield}
+   
+   
+! { setupdate -- action of H-SETUPDATE to set update limits for field }
+  procedure setupdate (rowa : rowtype;
+                       rowb : rowtype;
+                       cola : coltype;
+                       colb : coltype);
+  begin
+      cftest(nocf);               { flush any H-SETFIELD or H-SETCURSOR }
+      with field[curfield] do
+      begin
+          boxtop := rowa;     fldtop := boxtop;
+***************
+*** 1450,1512 ****
+  end;  {setupdate}
+   
+   
+! { erasetabs -- generate H-ERASETABS to erase all tabulation stops }
+  procedure erasetabs;
+  var
+      ctemp : coltype;
+-     ppar : primpar;
+  begin
+-     ppar[1] := nul;
+-     assemble(capn, 0, ppar);
+      for ctemp := 0 to maxcol do
+          tabs[ctemp] := notab
+  end;  {erasetabs}
+   
+   
+! { settab -- generate H-SETTAB to set one tabulation stop }
+  procedure settab (tcol : coltype);
+- var
+-     ppar : primpar;
+  begin
+-     ppar[1] := tcol;            { tabulation stop column }
+-     assemble(capo, 1, ppar);
+      tabs[tcol] := tabset
+  end;  {settab}
+   
+   
+! { session -- generate H-SESSION to enter or exit session }
+  procedure session (reqcode : smallint);
+  var
+!     ppar : primpar;
+  begin
+      cftest(nocf);           { flush any [H-SETFIELD or] H-SETCURSOR }
+-     ppar[1] := reqcode;     { request code, 0 or 1 }
+-     assemble(capp, 1, ppar);
+      if reqcode = 0 then
+!         initshared          { new session, init shared data structure }
+!     else
+!         pushframe           { current session ends, flush to network }
+  end;  {session}
+   
+   
+! { fetchtoken -- generate H-REQTOKEN to request early return of token }
+! procedure fetchtoken;
+! var
+!     ppar : primpar;
+! begin
+!     cftest(nocf);           { flush any H-SETFIELD or H-SETCURSOR }
+!     ppar[1] := nul;
+!     pushframe;              { this primitive travels alone... }
+!     assemble(capq, 0, ppar);
+!     pushframe;              { ...so end the frame }
+!     treqstate := expecttok  { having asked, there's bound to be one }
+! end;  {fetchtoken}
+!  
+!  
+! { reqtoken -- if we haven't got the token soon, generate H-REQTOKEN }
+  procedure reqtoken;
+  begin
+!     treqstate := needtok    { ask if no token by end of frame }
+  end;  {reqtoken}
+   
+   
+--- 1315,1361 ----
+  end;  {setupdate}
+   
+   
+! { erasetabs -- action of H-ERASETABS to erase all tabulation stops }
+  procedure erasetabs;
+  var
+      ctemp : coltype;
+  begin
+      for ctemp := 0 to maxcol do
+          tabs[ctemp] := notab
+  end;  {erasetabs}
+   
+   
+! { settab -- action of H-SETTAB to set one tabulation stop }
+  procedure settab (tcol : coltype);
+  begin
+      tabs[tcol] := tabset
+  end;  {settab}
+   
+   
+! { session -- action of H-SESSION to enter or exit session }
+  procedure session (reqcode : smallint);
+  var
+!     tcmaxrow : rowtype;
+!     tcmaxcol : coltype;
+  begin
+      cftest(nocf);           { flush any [H-SETFIELD or] H-SETCURSOR }
+      if reqcode = 0 then
+!     begin
+!         initshared;         { new session, init shared data structure }
+!         masterlevel := 1;
+!         UGETSIZE(tcmaxrow, tcmaxcol);
+!         queueprim(capc, tlevel, masterlevel);     { queue T-SETMODE }
+!         queueprim(capc, tmaxrow, (tcmaxrow - 1)); { queue T-SETMODE }
+!         queueprim(capc, tmaxcol, (tcmaxcol - 1)); { queue T-SETMODE }
+!     end
+  end;  {session}
+   
+   
+! { reqtoken -- action of H-REQTOKEN to request early return of token }
+  procedure reqtoken;
+  begin
+!     cftest(nocf);           { flush any H-SETFIELD or H-SETCURSOR }
+!     queueprim(capa, 128, nul)           { queue T-TOKEN(128) }
+  end;  {reqtoken}
+   
+   
+***************
+*** 1620,1670 ****
+  procedure refresh;
+  var
+      svrow, trow : rowtype;
+!     svcol, tcol : coltype;
+!     fidx, fcur, fmax : fieldindex;
+!     fdefs : array [fieldindex] of savedfield;
+!     midx : modeindex;
+!     mval : smallint;
+!     tdefs : array [coltype] of tabstop;
+      text : rowtext;
+  begin
+      svrow := row;  svcol := col;    { note cursor position }
+   
+-     { stored field definitions }
+-     fcur := curfield;
+-     fmax := maxfield;
+-     for fidx := 0 to fmax do
+-         fdefs[fidx] := field[fidx];
+-     erasefields;
+-     for fidx := 0 to fmax do
+-     with fdefs[fidx] do
+-     begin
+-         setfield(fidx);
+-         setupdate(fldtop, fldbottom, fldleft, fldright)
+-     end;
+-     if fcur <> curfield then
+-         setfield(fcur);
+-  
+      { mode array }
+      if masterlevel = 0 then
+          masterlevel := 1;       { safety check }
+!     mode[tlevel] := masterlevel;
+!     mode[dsinvalid] := 0;
+!     mode[selectgr] := defrend;
+!     for midx := 0 to maxmode do
+!     begin
+!         mval := mode[midx];
+!         setmode(midx, mval)
+!     end;
+   
+-     { tabulation stops array }
+-     for tcol := 0 to maxcol do
+-         tdefs[tcol] := tabs[tcol];
+-     erasetabs;
+-     for tcol := 0 to maxcol do
+-         if tdefs[tcol] = tabset then
+-             settab(tcol);
+-  
+      { screen image and cursor position }
+      for trow := 0 to maxrow do
+      begin
+--- 1469,1486 ----
+  procedure refresh;
+  var
+      svrow, trow : rowtype;
+!     svcol       : coltype;
+      text : rowtext;
+  begin
+      svrow := row;  svcol := col;    { note cursor position }
+   
+      { mode array }
+      if masterlevel = 0 then
+          masterlevel := 1;       { safety check }
+!     setmode(tlevel, masterlevel);
+!     setmode(dsinvalid, 0);
+!     setmode(selectgr, defrend);
+   
+      { screen image and cursor position }
+      for trow := 0 to maxrow do
+      begin
+***************
+*** 1678,1684 ****
+  { tcharacter -- interpret T-CHARACTER character replaced report }
+  procedure tcharacter (ch : isochar);
+  begin
+!     image[row,col] := ch;
+      if col < boxright then
+          col := col + 1
+  end;  {tcharacter}
+--- 1494,1506 ----
+  { tcharacter -- interpret T-CHARACTER character replaced report }
+  procedure tcharacter (ch : isochar);
+  begin
+!     if defer then
+!         queueprim(star, ch, nul)        { queue T-CHARACTER }
+!     else
+!     begin
+!         image[row,col] := ch;
+!         UCHAR(ch);
+!     end;
+      if col < boxright then
+          col := col + 1
+  end;  {tcharacter}
+***************
+*** 1687,1707 ****
+  { ttoken -- interpret T-TOKEN return of token }
+  procedure ttoken (reqcode : smallint);
+  begin
+!     token := withhost;
+!     if reqcode = 128 then               { reply to H-REQTOKEN }
+!         mode[tlevel] := masterlevel
+!     else if treqstate = expecttok then
+!         netread;                        { swallow duplicate token }
+!     treqstate := notkreq;
+!  
+!     if (mode[dsinvalid] <> 0) or        { data structure corrupt }
+!         (mode[tlevel] <> masterlevel)   { return from nested session }
+!     then
+      begin
+!         refresh;
+!         repainted := true
+      end
+-     { application will interpret the request code parameter }
+  end;  {ttoken}
+   
+   
+--- 1509,1531 ----
+  { ttoken -- interpret T-TOKEN return of token }
+  procedure ttoken (reqcode : smallint);
+  begin
+!     if defer then
+!         queueprim(capa, reqcode, nul)   { queue T-TOKEN }
+!     else
+      begin
+!         UTOKEN(1);
+!         token := withhost;
+!         if reqcode = 128 then             { possibly a duplicate token }
+!             mode[tlevel] := masterlevel;
+!         if (mode[dsinvalid] <> 0) or      { data structure corrupt }
+!             (mode[tlevel] <> masterlevel) { return from nested session }
+!         then
+!         begin
+!             refresh;
+!             repainted := true
+!         end
+!         { application will interpret the request code parameter }
+      end
+  end;  {ttoken}
+   
+   
+***************
+*** 1709,1714 ****
+--- 1533,1544 ----
+  procedure tsetcursor (newrow : rowtype;
+                        newcol : coltype);
+  begin
++     if defer then
++         queueprim(capb, newrow, newcol)     { queue T-SETCURSOR }
++     else
++     begin
++         USETCURSOR(newrow, newcol);
++     end;
+      row := newrow;
+      col := newcol
+  end;  {tsetcursor}
+***************
+*** 1720,1755 ****
+  var
+      newval : smallint;
+  begin
+!     newval := ivalue;
+!     if index <= dsinvalid then
+      begin
+!         case index of
+   
+!         tlevel:
+!             if newval = 0 then
+!                 mode[dsinvalid] := 1
+!             else if masterlevel = 0 then
+!                 masterlevel := newval;
+   
+!         tmaxrow:
+!             if newval > zmaxrow then
+!                 newval := zmaxrow;
+   
+!         tmaxcol:
+!             if newval > zmaxcol then
+!                 newval := zmaxcol;
+   
+!         dsinvalid:
+!             newval := 1;
+   
+!         end  {case}
+      end
+-     else
+-     if (index = icharmode) and (newval > 1) then
+-         newval := 0
+-     else
+-         ivalue := 0;
+-     mode[index] := newval;
+  end;  {tsetmode}
+   
+   
+--- 1550,1590 ----
+  var
+      newval : smallint;
+  begin
+!     if defer then
+!         queueprim(capc, index, ivalue)      { queue T-SETMODE }
+!     else
+      begin
+!         newval := ivalue;
+!         if index <= dsinvalid then
+!         begin
+!             case index of
+   
+!             tlevel:
+!                 if newval = 0 then
+!                     mode[dsinvalid] := 1
+!                 else if masterlevel = 0 then
+!                     masterlevel := newval;
+   
+!             tmaxrow:
+!                 if newval > zmaxrow then
+!                     newval := zmaxrow;
+   
+!             tmaxcol:
+!                 if newval > zmaxcol then
+!                     newval := zmaxcol;
+   
+!             dsinvalid:
+!                 newval := 1;
+   
+!             end  {case}
+!         end
+!         else
+!         if (index = icharmode) and (newval > 1) then
+!             newval := 0
+!         else
+!             ivalue := 0;
+!         mode[index] := newval;
+      end
+  end;  {tsetmode}
+   
+   
+***************
+*** 1756,1761 ****
+--- 1591,1599 ----
+  { terasetoright -- interpret T-ERASETORIGHT right erasure report }
+  procedure terasetoright;
+  begin
++     if defer then
++         queueprim(capd, nul, nul)           { queue T-ERASETORIGHT }
++     else
+      if (mode[keraright] > 0) or (mode[keraline] > 0) then
+          eraserow(row, col, boxright)
+  end;  {terasetoright}
+***************
+*** 1764,1769 ****
+--- 1602,1610 ----
+  { tinsertspace -- interpret T-INSERTSPACE SPACEs inserted report }
+  procedure tinsertspace (nsp : smallint);
+  begin
++     if defer then
++         queueprim(cape, nsp, nul)           { queue T-INSERTSPACE }
++     else
+      if (mode[kinsspac] > 0)
+          or (mode[icharmode] = 1) then
+              rightshift(row, col, boxright, nsp)
+***************
+*** 1773,1778 ****
+--- 1614,1622 ----
+  { tdeletechar -- interpret T-DELETECHAR characters deleted report }
+  procedure tdeletechar (nch : smallint);
+  begin
++     if defer then
++         queueprim(capf, nch, nul)           { queue T-DELETECHAR }
++     else
+      if mode[kdelchar] > 0 then
+          leftshift(row, col, boxright, nch)
+  end;  {tdeletechar}
+***************
+*** 1783,1788 ****
+--- 1627,1634 ----
+  var
+      temp : smallint;
+  begin
++     if defer then
++         queueprim(capg, nch, nul);          { queue T-ERASEPREV }
+      if mode[keraprev] > 0 then
+      begin
+          { Note:  nch <= col - boxleft }
+***************
+*** 1789,1795 ****
+          for temp := 1 to nch do
+          begin
+              col := col - 1;
+!             image[row,col] := isospace
+          end
+      end
+  end;  {teraseprev}
+--- 1635,1651 ----
+          for temp := 1 to nch do
+          begin
+              col := col - 1;
+!             if not defer then
+!             begin
+!                 if mode[icharmode] = 1 then
+!                     leftshift(row, col, boxright, 1)
+!                 else begin
+!                     USETCURSOR(row, col);
+!                     UCHAR(isospace);
+!                     USETCURSOR(row, col);
+!                     image[row,col] := isospace
+!                 end
+!             end
+          end
+      end
+  end;  {teraseprev}
+***************
+*** 1800,1805 ****
+--- 1656,1664 ----
+  var
+      rtemp : rowtype;
+  begin
++     if defer then
++         queueprim(caph, nln, nul)           { queue T-INSERTLINE }
++     else
+      if mode[kinsline] > 0 then
+      begin
+          if (boxbottom-row) < nln then
+***************
+*** 1806,1814 ****
+              erasebox(row, boxbottom, boxleft, boxright)
+          else
+          begin
+!             for rtemp := boxbottom-nln downto row do
+!                 rowcopy(rtemp, rtemp+nln, boxleft, boxright);
+!             erasebox(row, row+nln-1, boxleft, boxright)
+          end
+      end
+  end;  {tinsertline}
+--- 1665,1678 ----
+              erasebox(row, boxbottom, boxleft, boxright)
+          else
+          begin
+!             if  (boxleft = 0) and (boxright = maxcol) then
+!                 scrolldown(row, boxbottom, nln)
+!             else
+!             begin
+!                 for rtemp := boxbottom-nln downto row do
+!                     rowcopy(rtemp, rtemp+nln, boxleft, boxright);
+!                 erasebox(row, row+nln-1, boxleft, boxright)
+!             end
+          end
+      end
+  end;  {tinsertline}
+***************
+*** 1819,1824 ****
+--- 1683,1691 ----
+  var
+      rtemp : rowtype;
+  begin
++     if defer then
++         queueprim(capi, nln, nul)           { queue T-DELETELINE }
++     else
+      if mode[kdelline] > 0 then
+      begin
+          if (boxbottom-row) < nln then
+***************
+*** 1825,1833 ****
+              erasebox(row, boxbottom, boxleft, boxright)
+          else
+          begin
+!             for rtemp := row+nln to boxbottom do
+!                 rowcopy(rtemp, rtemp-nln, boxleft, boxright);
+!             erasebox(boxbottom-nln+1, boxbottom, boxleft, boxright)
+          end
+      end
+  end;  {tdeleteline}
+--- 1692,1705 ----
+              erasebox(row, boxbottom, boxleft, boxright)
+          else
+          begin
+!             if  (boxleft = 0) and (boxright = maxcol) then
+!                 scrollup(row, boxbottom, nln)
+!             else
+!             begin
+!                 for rtemp := row+nln to boxbottom do
+!                     rowcopy(rtemp, rtemp-nln, boxleft, boxright);
+!                 erasebox(boxbottom-nln+1, boxbottom, boxleft, boxright)
+!             end
+          end
+      end
+  end;  {tdeleteline}
+***************
+*** 1838,1859 ****
+  var
+      rtemp : rowtype;
+  begin
+      if mode[kappline] > 0 then
+      begin
+          col := boxleft;
+          if (row >= mode[ilinerow]) or (row = boxbottom) then
+          begin
+!             if boxtop < boxbottom then
+!                 for rtemp := boxtop+1 to row do
+!                     rowcopy(rtemp, rtemp-1, boxleft, boxright)
+          end
+          else
+          begin
+              row := row + 1;
+!             for rtemp := boxbottom-1 downto row do
+!                 rowcopy(rtemp, rtemp+1, boxleft, boxright)
+          end;
+!         eraserow(row, boxleft, boxright)
+      end
+  end;  {tappendline}
+   
+--- 1710,1744 ----
+  var
+      rtemp : rowtype;
+  begin
++     if defer then
++         queueprim(capj, nul, nul);          { queue T-APPENDLINE }
+      if mode[kappline] > 0 then
+      begin
+          col := boxleft;
+          if (row >= mode[ilinerow]) or (row = boxbottom) then
+          begin
+!             if (not defer) and (boxtop < boxbottom) then
+!                 if  (boxleft = 0) and (boxright = maxcol) then
+!                     scrollup(boxtop, row, 1)
+!                 else
+!                     for rtemp := boxtop+1 to row do
+!                         rowcopy(rtemp, rtemp-1, boxleft, boxright)
+          end
+          else
+          begin
+              row := row + 1;
+!             if not defer then
+!                 if  (boxleft = 0) and (boxright = maxcol) then
+!                     scrolldown(row, boxbottom, 1)
+!                 else
+!                     for rtemp := boxbottom-1 downto row do
+!                         rowcopy(rtemp, rtemp+1, boxleft, boxright)
+          end;
+!         if not defer then
+!         begin
+!             eraserow(row, boxleft, boxright);
+!             tsetcursor(row, col);
+!         end;
+      end
+  end;  {tappendline}
+   
+***************
+*** 1864,1869 ****
+--- 1749,1756 ----
+      rtemp : rowtype;
+      cinit : coltype;
+  begin
++     if defer then
++         queueprim(capk, nul, nul);          { queue T-SPLITLINE }
+      if mode[ksplline] > 0 then
+      begin
+          cinit := col;
+***************
+*** 1870,1888 ****
+          col := boxleft;
+          if (row >= mode[ilinerow]) or (row = boxbottom) then
+          begin
+!             if boxtop < boxbottom then
+!                 for rtemp := boxtop+1 to row do
+!                     rowcopy(rtemp, rtemp-1, boxleft, boxright)
+          end
+          else
+          begin
+!             for rtemp := boxbottom-1 downto row do
+!                 rowcopy(rtemp, rtemp+1, boxleft, boxright);
+              row := row + 1
+          end;
+!         if row > boxtop then
+!             eraserow(row-1, cinit, boxright);
+!         leftshift(row, boxleft, boxright, cinit-boxleft)
+      end
+  end;  {tsplitline}
+   
+--- 1757,1792 ----
+          col := boxleft;
+          if (row >= mode[ilinerow]) or (row = boxbottom) then
+          begin
+!             if (not defer) and (boxtop < boxbottom) then
+!                 if  (boxleft = 0) and (boxright = maxcol) then
+!                 begin
+!                     scrollup(boxtop, row-1, 1);
+!                     rowcopy(row, row-1, boxleft, boxright)
+!                 end
+!                 else
+!                     for rtemp := boxtop+1 to row do
+!                         rowcopy(rtemp, rtemp-1, boxleft, boxright)
+          end
+          else
+          begin
+!             if not defer then
+!                 if  (boxleft = 0) and (boxright = maxcol) then
+!                 begin
+!                     scrolldown(row+1, boxbottom, 1);
+!                     rowcopy(row, row+1, boxleft, boxright)
+!                 end
+!                 else
+!                     for rtemp := boxbottom-1 downto row do
+!                         rowcopy(rtemp, rtemp+1, boxleft, boxright);
+              row := row + 1
+          end;
+!         if not defer then
+!         begin
+!             if row > boxtop then
+!                 eraserow(row-1, cinit, boxright);
+!             leftshift(row, boxleft, boxright, cinit-boxleft);
+!             USETCURSOR(row, col);
+!         end
+      end
+  end;  {tsplitline}
+   
+***************
+*** 1890,1895 ****
+--- 1794,1801 ----
+  { tsetfield -- interpret T-SETFIELD field selection report }
+  procedure tsetfield (fidx : fieldindex);
+  begin
++     if defer then
++         queueprim(capl, fidx, nul);         { queue T-SETFIELD }
+      { Note: fidx <= maxfield }
+      curfield := fidx;
+      with field[curfield] do
+***************
+*** 1897,2192 ****
+          boxtop := fldtop;  boxbottom := fldbottom;
+          boxleft := fldleft;  boxright := fldright
+      end;
+!     row := boxtop;  col := boxleft
+  end;  {tsetfield}
+   
+   
+! { parsenum -- parse a stream of characters into n numbers }
+! function parsenum (expected : integer;
+!                    c : isochar;
+!                    var fin : boolean)
+!         : isochar;
+  var
+!     nst : isochar;
+  begin
+!     fin := false;
+!     nst := ssmpstate;           { state change on completion or error }
+   
+!     if (c >= dig0) and (c <= dig9) then
+!     begin
+!         tsum := (10 * tsum) + (c - dig0);  gotdigit := true;
+!         if tsum > 255 then nst := question  { parameter too large }
+      end
+      else
+!     if ((c = comma) or (c = semicol))       { parameter terminator }
+!         and gotdigit then                   { at least one digit }
+!     begin
+!         tparidx := tparidx + 1;
+!         tpars[tparidx] := tsum;
+!         tsum := 0;
+!         gotdigit := false;
+!         if tparidx = expected then
+!         begin                   { got enough pars, check termination }
+!             if c = semicol then
+!             begin
+!                 fin := true;  nst := nul    { finished }
+!             end
+!             else
+!                 nst := question             { too many parameters }
+!         end
+          else
+!         if c <> comma then
+!              nst := nul                     { early termination }
+      end
+      else
+!         nst := question;                    { unexpected character }
+!     parsenum := nst
+! end;  {parsenum}
+   
+   
+! { parsesemi -- check termination for primitives with no parameters }
+! function parsesemi (c : isochar;
+!                     var ok : boolean)
+!             : isochar;
+  var
+!     flag : boolean;
+  begin
+!     flag := (c = semicol);
+!     if flag then
+!         parsesemi := nul            { finished }
+!     else
+!         parsesemi := question;      { unexpected character }
+!     ok := flag
+! end;  {parsesemi}
+   
+   
+! { parsechar -- finite state machine emulation for ssmp }
+! function parsechar (ch : isochar) : boolean;
+  var
+!     nextst, tch : isochar;
+!     complete : boolean;
+  begin
+!     nextst := question;
+!     complete := true;
+!     case ssmpstate of
+   
+-     nul:        { ground state, process after case to catch errors }
+-         ;
+   
+!     colon:      { an encoded character follows }
+          begin
+!             tch := decode[ch];
+!             if tch <> blank then
+              begin
+!                 tprid := star;
+!                 tpars[1] := tch;
+!                 tcharacter(tch);
+!                 nextst := nul
+              end
+!         end;
+   
+-     equals:     { start of a primitive other than T-CHARACTER }
+-         if (ch >= capa) and (ch <= capl) then
+-         begin
+-             nextst := ch;
+-             tprid := ch;
+-             complete := false;
+-             tparidx := 0;               { initialise number parser }
+-             tsum := 0;
+-             gotdigit := false
+-         end;
+   
+!     capa:       { parsing T-TOKEN(reqcode) }
+          begin
+!             nextst := parsenum(1, ch, complete);
+!             if complete then
+!             begin
+!                 ttoken(tpars[1]);
+!                 if repainted then
+!                 begin
+!                     tpars[1] := 129;    { tell the application }
+!                     repainted := false
+!                 end;
+!                 inlen := 0              { discard remainder of frame }
+!             end
+!         end;
+   
+-     capb:       { parsing T-SETCURSOR(newrow, newcol) }
+-         begin
+-             nextst := parsenum(2, ch, complete);
+-             if complete then
+-             begin
+-                 complete :=
+-                     (tpars[1] <= maxrow) and (tpars[2] <= maxcol);
+-                 if complete then
+-                     tsetcursor(tpars[1], tpars[2])
+-             end
+-         end;
+   
+!     capc:       { parsing T-SETMODE(index, ivalue) }
+!         begin
+!             nextst := parsenum(2, ch, complete);
+!             if complete then
+!             begin
+!                 complete := tpars[1] <= 63;
+!                 if complete then
+!                     tsetmode(tpars[1], tpars[2])
+!             end
+!         end;
+   
+-     capd:       { parsing T-ERASETORIGHT }
+-         begin
+-             nextst := parsesemi(ch, complete);
+-             if complete then
+-                 terasetoright
+-         end;
+   
+!     cape:       { parsing T-INSERTSPACE(nch) }
+!         begin
+!             nextst := parsenum(1, ch, complete);
+!             if complete then
+!                 tinsertspace(tpars[1])
+!         end;
+   
+-     capf:       { parsing T-DELETECHAR(nch) }
+-         begin
+-             nextst := parsenum(1, ch, complete);
+-             if complete then
+-                 tdeletechar(tpars[1])
+-         end;
+   
+!     capg:       { parsing T-ERASEPREV(nch) }
+!         begin
+!             nextst := parsenum(1, ch, complete);
+!             if complete then
+!                 teraseprev(tpars[1])
+!         end;
+   
+-     caph:       { parsing T-INSERTLINE(nln) }
+-         begin
+-             nextst := parsenum(1, ch, complete);
+-             if complete then
+-                 tinsertline(tpars[1])
+-         end;
+   
+!     capi:       { parsing T-DELETELINE(nln) }
+!         begin
+!             nextst := parsenum(1, ch, complete);
+!             if complete then
+!                 tdeleteline(tpars[1])
+!         end;
+   
+!     capj:       { parsing T-APPENDLINE }
+          begin
+!             nextst := parsesemi(ch, complete);
+!             if complete then
+!                 tappendline
+!         end;
+   
+!     capk:       { parsing T-SPLITLINE }
+          begin
+!             nextst := parsesemi(ch, complete);
+!             if complete then
+!                 tsplitline
+!         end;
+   
+!     capl:       { parsing T-SETFIELD(fidx) }
+          begin
+!             nextst := parsenum(1, ch, complete);
+!             if complete then
+!             begin
+!                 complete := tpars[1] <= maxfield;
+!                 if complete then
+!                     tsetfield(tpars[1])
+!             end
+          end
+   
+-     end;  {case}
+   
+!     if nextst = question then
+!     begin       { process in ground state }
+!         nextst := nul;
+!         complete := false;
+!         if (ch = equals) or (ch = colon) then
+!             nextst := ch
+          else
+!         if ch <> semicol then
+!         begin  { T-CHARACTER }
+!             tprid := star;
+!             tpars[1] := ch;
+!             tcharacter(ch);
+!             complete := true
+          end
+      end;
+   
+-     ssmpstate := nextst;
+-     parsechar := complete
+- end;  {parsechar}
+   
+-  
+  { getprimitive -- process input until a primitive has been decoded }
+  procedure getprimitive (var pcode : isochar;
+                          var ppars : primpar);
+  var
+!     nextch : isochar;
+  begin
+!     repeat
+          repeat
+!             while inptr >= inlen do
+!             begin
+!                 if treqstate = needtok then
+!                     fetchtoken;
+!                 netread
+!             end;
+!             inptr := inptr + 1;
+!             nextch := filter[inbuff[inptr]]
+!         until nextch <> nul;
+!     until parsechar(nextch);
+!     pcode := tprid;
+!     ppars := tpars
+! end;  {getprimitive}
+   
+   
+! { resetlink -- reset network link at end of session }
+! procedure resetlink;
+! begin
+!     iocontrol(iomddeflt, stdout);   { normal output }
+!     iocontrol(iomddeflt, stdin);    { whatever is normal input }
+! end;  {resetlink}
+   
+   
+  { startssmp -- negotiate screen management session with terminal }
+  procedure startssmp (var success : boolean;
+                       usertext : chstring);
+- var
+-     j : integer;
+  begin
+      initcoding;
+!     iocontrol(iomdasis, stdout);    { ready built packets }
+!     iocontrol(iomdmsg, stdin);      { no native mode, please }
+   
+      session(0);                 { initialises shared data structure }
+!     textchar(blank);  textchar(blank);
+!     j := 1;
+!     while usertext[j] <> endstr do
+!     begin
+!         textchar(usertext[j]);
+!         j := j + 1
+!     end;
+!     textchar(blank);  textchar(blank);
+      sendtoken(1);
+   
+!     netread;            { read first frame, crude check for T-SETMODE }
+!     success := (inbuff[1] = equals) and (inbuff[2] = capc)
+!         and (inbuff[3] = dig0);
+!  
+!     if not success then
+!     begin
+!         timewait(3);            { 3 second wait stabilises terminal }
+!         session(1);             { cures double RETURN by user }
+!         resetlink               { and back to normal i/o }
+!     end;
+!     { any error message is the responsibility of the application }
+  end;  {startssmp }
+   
+   
+--- 1803,2416 ----
+          boxtop := fldtop;  boxbottom := fldbottom;
+          boxleft := fldleft;  boxright := fldright
+      end;
+!     row := boxtop;  col := boxleft;
+!     if not defer then
+!     begin
+!         USETCURSOR(row, col);
+!     end
+  end;  {tsetfield}
+   
+   
+! { checkfield -- identify and check field which cursor occupies }
+! function checkfield (warnuser : boolean) : boolean;
+  var
+!     tfield  : fieldindex;
+!     found, seeking : boolean;
+!     trow    : rowtype;
+!     tcol    : coltype;
+  begin
+!     found := (row >= boxtop) and (row <= boxbottom)
+!         and (col >= boxleft) and (col <= boxright);
+!                                    { within current field? }
+!     if not found then
+!     begin    { attempt identification of new current field }
+!         seeking := true;  tfield := 0;
+!         while seeking do
+!             with field[tfield] do
+!             begin
+!                 if (row >= fldtop) and (row <= fldbottom)
+!                   and (col >= fldleft) and (col <= fldright)
+!                 then
+!                 begin
+!                     found := true;  seeking := false
+!                 end
+!                 else
+!                 if tfield < maxfield
+!                     then tfield := tfield + 1
+!                     else seeking := false
+!             end;
+   
+!         if found then
+!         begin
+!             trow := row;  tcol := col;
+!             tsetfield(tfield);       { select new field }
+!             tsetcursor(trow, tcol)   { report cursor posn }
+!         end
+!         else
+!         if warnuser then
+!         begin  { edit -- sound alarm to warn user }
+!             UALARM;
+!         end
+!     end;
+!     checkfield := found
+! end;  {checkfield}
+!  
+!  
+! { upkey -- process keystroke associated with mode[kcsrup] }
+! procedure upkey;
+! begin
+!     if mode[cursor] = 0 then
+!     begin  { cursor bound to update limits box }
+!         if row > boxtop
+!             then tsetcursor(row-1, col)
+!             else ttoken(mode[kcsrup])
+      end
+      else
+!     begin  { free cursor }
+!         if row > 0
+!             then tsetcursor(row-1, col)
+!             else tsetcursor(maxrow, col)
+!     end
+! end;  {upkey}
+!  
+!  
+! { downkey -- process keystroke associated with mode[kcsrdown] }
+! procedure downkey;
+! begin
+!     if mode[cursor] = 0 then
+!     begin  { Cursor bound to update limits box }
+!         if row < boxbottom
+!             then tsetcursor(row+1, col)
+!             else ttoken(mode[kcsrdown])
+!     end
+!     else
+!     begin  { Free cursor }
+!         if row < maxrow
+!             then tsetcursor(row+1, col)
+!             else tsetcursor(0, col)
+!     end
+! end;  {downkey}
+!  
+!  
+! { leftkey -- process keystroke associated with mode[kcsrleft] }
+! procedure leftkey;
+! begin
+!     if mode[cursor] = 0 then
+!     begin  { Cursor bound to update limits box }
+!         if col > boxleft
+!             then tsetcursor(row, col-1)
+!             else ttoken(mode[kcsrleft])
+!     end
+!     else
+!     begin  { Free cursor }
+!         if col > 0 then tsetcursor(row, col-1)
+          else
+!         begin
+!             if row > 0
+!                 then tsetcursor(row-1, maxcol)
+!                 else tsetcursor(maxrow, maxcol)
+!         end
+      end
++ end;  {leftkey}
++  
++  
++ { rightkey -- process keystroke associated with mode[kcrsright] }
++ procedure rightkey;
++ begin
++     if mode[cursor] = 0 then
++     begin  { Cursor bound to update limits box }
++         if col < boxright
++             then tsetcursor(row, col+1)
++             else ttoken(mode[kcsrright])
++     end
+      else
+!     begin  { Free cursor }
+!         if col < maxcol then tsetcursor(row, col+1)
+!         else
+!         begin
+!             if row < maxrow
+!                 then tsetcursor(row+1, 0)
+!                 else tsetcursor(0, 0)
+!         end
+!     end
+! end;  {rightkey}
+   
+   
+! { enterkey -- process keystroke associated with mode[kenter] }
+! procedure enterkey;
+! begin
+!     while not checkfield(false) do rightkey;
+!     tsetcursor(row, boxleft);
+!     ttoken(mode[kenter])
+! end;  {enterkey}
+!  
+!  
+! { nexttabkey -- process keystroke associated with mode[ktabnext] }
+! procedure nexttabkey;
+  var
+!     atlimit, seeking : boolean;
+!     tcol, rlimit : coltype;
+  begin
+!     if mode[cursor] = 0
+!         then rlimit := boxright else rlimit := maxcol;
+!     tcol := col;  atlimit := false;  seeking := true;
+!     while seeking do
+!     begin
+!        if tcol < rlimit then
+!        begin
+!            tcol := tcol + 1;
+!            if tabs[tcol] = tabset then seeking := false
+!        end
+!        else
+!        begin
+!            seeking := false;  atlimit := true
+!        end
+!     end;
+!     tsetcursor(row, tcol);
+!     if atlimit then
+!     begin
+!         if mode[cursor] = 0
+!             then ttoken(mode[knexttab])
+!             else rightkey
+!     end
+! end;  {nexttabkey}
+   
+   
+! { prevtabkey -- process keystroke associated with mode[ktabprev] }
+! procedure prevtabkey;
+  var
+!     atlimit, seeking : boolean;
+!     tcol, llimit : coltype;
+  begin
+!     if mode[cursor] = 0
+!         then llimit := boxleft else llimit := 0;
+!     tcol := col;  atlimit := false;  seeking := true;
+!     while seeking do
+!     begin
+!        if tcol > llimit then
+!        begin
+!            tcol := tcol - 1;
+!            if tabs[tcol] = tabset then seeking := false
+!        end
+!        else
+!        begin
+!            seeking := false;  atlimit := true
+!        end
+!     end;
+!     tsetcursor(row, tcol);
+!     if atlimit then
+!     begin
+!         if mode[cursor] = 0
+!             then ttoken(mode[kprevtab])
+!             else leftkey
+!     end
+! end;  {prevtabkey}
+   
+   
+! { leftukey -- process keystroke associated with mode[kleftupd] }
+! procedure leftukey;
+! begin
+!     while not checkfield(false) do rightkey;
+!     tsetcursor(row, boxleft)
+! end;  {leftukey}
+!  
+!  
+! { firstnskey -- process keystroke associated with mode[kfirstns] }
+! procedure firstnskey;
+! var
+!     tcol : coltype;
+!     seeking : boolean;
+! begin
+!     while not checkfield(false) do rightkey;
+!     tcol := boxleft;  seeking := true;
+!     while seeking do
+!     begin
+!         if image[row,tcol] <> isospace then seeking := false
+!         else
+          begin
+!             if tcol < boxright then tcol := tcol + 1
+!             else
+              begin
+!                 seeking := false;  tcol := boxleft
+              end
+!         end
+!     end;
+!     tsetcursor(row, tcol)
+! end;  {firstnskey}
+   
+   
+! { alastnskey -- process keystroke associated with mode[kalastns] }
+! procedure alastnskey;
+! var
+!     tcol : coltype;
+!     seeking : boolean;
+! begin
+!     while not checkfield(false) do rightkey;
+!     tcol := boxright;  seeking := true;
+!     while seeking do
+!     begin
+!         if image[row,tcol] <> isospace then seeking := false
+!         else
+          begin
+!             if tcol > boxleft
+!                 then tcol := tcol - 1
+!                 else seeking := false
+!         end
+!     end;
+!     if (image[row,tcol] <> isospace)
+!         and (tcol < boxright) then tcol := tcol + 1;
+!     tsetcursor(row, tcol)
+! end;  {alastnskey}
+!  
+!  
+! { ctogglekey -- process keystroke associated with mode[kinsmode] }
+! procedure ctogglekey;
+! begin
+!     tsetmode(icharmode, 1-mode[icharmode])
+! end;  {ctogglekey}
+   
+   
+! { erightkey -- process keystroke associated with mode[keraright] }
+! procedure erightkey;
+! begin
+!     if checkfield(true) then terasetoright
+! end;  {erightkey}
+   
+   
+! { ispackey -- process keystroke associated with mode[kinsspac] }
+! procedure ispackey;
+! begin
+!     if checkfield(true) then tinsertspace(1)
+! end;  {ispackey}
+   
+   
+! { dcharkey -- process keystroke associated with mode[kdelchar] }
+! procedure dcharkey;
+! begin
+!     if checkfield(true) then tdeletechar(1)
+! end;  {dcharkey}
+   
+   
+! { eprevkey -- process keystroke associated with mode[keraprev] }
+! procedure eprevkey;
+   
+!     procedure tryprevious;
+!     var
+!         trow : rowtype;
+!         tcol : coltype;
+!     begin
+!         leftkey;
+!         if checkfield(true) then
+          begin
+!             trow := row;  tcol := col;
+!             tcharacter(isospace);  tsetcursor(trow, tcol)
+!         end
+!     end;  {tryprevious}
+   
+! begin  {eprevkey}
+!     if checkfield(false) then
+!     begin
+!         if col = boxleft then
+          begin
+!             if mode[cursor] = 0
+!                 then ttoken(mode[keraprev])
+!                 else tryprevious
+!         end
+!         else teraseprev(1)
+!     end
+!     else
+!     if mode[cursor] = 1 then tryprevious
+! end;  {eprevkey}
+   
+!  
+! { ilinekey -- process keystroke associated with mode[kinsline] }
+! procedure ilinekey;
+! begin
+!     if checkfield(true) then
+!     begin
+!         tinsertline(1);
+!         tsetcursor(row, col);
+!     end;
+! end;  {ilinekey}
+!  
+!  
+! { dlinekey -- process keystroke associated with mode[kdelline] }
+! procedure dlinekey;
+! begin
+!     if checkfield(true) then
+!     begin
+!         tdeleteline(1);
+!         tsetcursor(row, col);
+!     end;
+! end;  {dlinekey}
+!  
+!  
+! { elinekey -- process keystroke associated with mode[keraline] }
+! procedure elinekey;
+! begin
+!     if checkfield(true) then
+!     begin
+!         tsetcursor(row, boxleft);
+!         terasetoright
+!     end
+! end;  {elinekey}
+!  
+!  
+! { alinekey -- process keystroke associated with mode[kappline] }
+! procedure alinekey;
+! begin
+!     if checkfield(true) then tappendline;
+! end;  {alinekey}
+!  
+!  
+! { slinekey -- process keystroke associated with mode[ksplline] }
+! procedure slinekey;
+! begin
+!     if checkfield(true) then tsplitline
+! end;  {slinekey}
+!  
+!  
+! { nextfkey -- process keystroke associated with mode[knextfld] }
+! procedure nextfkey;
+! begin
+!     while not checkfield(false) do leftkey;
+!     if curfield < maxfield
+!         then tsetfield(curfield+1)
+!         else tsetfield(0)
+! end;  {nextfkey}
+!  
+!  
+! { prevfkey -- process keystroke associated with mode[kprevfld] }
+! procedure prevfkey;
+! begin
+!     while not checkfield(false) do rightkey;
+!     if curfield > 0
+!         then tsetfield(curfield-1)
+!         else tsetfield(maxfield)
+! end;  {prevfkey}
+!  
+!  
+! { homefkey -- process keystroke associated with mode[khomefld] }
+! procedure homefkey;
+! begin
+!     tsetfield(0)
+! end;  {homefkey}
+!  
+!  
+! { newlnkey -- process keystroke associated with mode[knewline] }
+! procedure newlnkey;
+! begin
+!     while not checkfield(false) do leftkey;
+!     if row < boxbottom
+!         then tsetcursor(row+1, boxleft)
+!         else nextfkey
+! end;  {newlnkey}
+!  
+!  
+! { restartkey -- process keystroke associated with mode[krestart] }
+! procedure restartkey;
+! begin
+!     mode[dsinvalid] := 1;
+!     queueprim(capa, 129, 0);
+! end; {restartkey}
+!  
+!  
+! { datakey -- process data keystrokes }
+! procedure datakey (chkey : isochar);
+! var
+!     atboxright : boolean;
+! begin
+!     if checkfield(true) then
+!     begin
+!         if mode[icharmode] = 1
+!             then tinsertspace(1); { Insert a SPACE }
+!         atboxright := col = boxright;
+!         tcharacter(chkey);     { Replaces character and
+!                                  may move cursor to right }
+!         if atboxright then
+          begin
+!             if mode[cursor] = 0
+!                 then ttoken(0)
+!                 else rightkey
+          end
++     end
++ end;  {datakey}
+   
+   
+! { qcmdsignal -- process queue command signal keystroke }
+! procedure qcmdsignal (lkcode : isochar);
+! var
+!     mindex : modeindex;
+!     seeking, found : boolean;
+! begin
+!     mindex := kinthost; seeking := true;
+!     while seeking do
+!     begin
+!         found := lkcode = mode[mindex];
+!         if found or (mindex = knewline)
+!             then seeking := false
+!             else mindex := mindex + 1
+!     end;
+!  
+!     if found then
+!     begin  { a "K"-prefix function }
+!         case mindex of
+!             kinthost  : begin
+!                             UINTHOST;  ttoken(lkcode)
+!                         end;
+!             ksuspend  : ttoken(lkcode);
+!             krestart  : restartkey;
+!             kenter    : enterkey;
+!             kcsrup    : upkey;
+!             kcsrdown  : downkey;
+!             kcsrleft  : leftkey;
+!             kcsrright : rightkey;
+!             knexttab  : nexttabkey;
+!             kprevtab  : prevtabkey;
+!             kleftupd  : leftukey;
+!             kfirstns  : firstnskey;
+!             kalastns  : alastnskey;
+!             kinsmode  : ctogglekey;
+!             keraright : erightkey;
+!             kinsspac  : ispackey;
+!             kdelchar  : dcharkey;
+!             keraprev  : eprevkey;
+!             kinsline  : ilinekey;
+!             kdelline  : dlinekey;
+!             keraline  : elinekey;
+!             kappline  : alinekey;
+!             ksplline  : slinekey;
+!             knextfld  : nextfkey;
+!             kprevfld  : prevfkey;
+!             khomefld  : homefkey;
+!             knewline  : newlnkey
+!         end   {case}
+!     end
+!     else
+!         ttoken(lkcode)  { signal host application }
+! end;  {qcmdsignal}
+!  
+!  
+! { getlogkey -- get logical keystroke from one or two actual keystrokes }
+! function getlogkey (keych : isochar;
+!                     var retch : isochar;
+!                     var isdatach : boolean)
+!         : boolean;
+! var
+!     gotchar : boolean;
+! begin
+!     gotchar := false;
+!     isdatach := true;
+!     if escaped then
+!     begin
+!         retch := keych;
+!         if (keych >= isospace) and (keych <= tilde) then
+!             isdatach := false;
+!         escaped := false;
+!         gotchar := true
+!     end
+!     else
+!     begin
+!         if keych = esc then
+!             escaped := true
+          else
+!         begin
+!             retch := keych;
+!             if (keych < isospace) or (keych > tilde) then
+!                 isdatach := false;
+!             gotchar := true
+          end
+      end;
++     getlogkey := gotchar
++ end;  {getlogkey}
+   
+   
+  { getprimitive -- process input until a primitive has been decoded }
+  procedure getprimitive (var pcode : isochar;
+                          var ppars : primpar);
+  var
+!     nextch, lch : isochar;
+!     svrow : rowtype;
+!     svcol : coltype;
+!     svfld : fieldindex;
+!     i : integer;
+!     isdata : boolean;
+  begin
+!     while nqueued <= 0 do
+!     begin
+          repeat
+!             UREAD(nextch);             { read from keyboard }
+!         until
+!             getlogkey(nextch, lch, isdata);
+   
++         { save state and prevent image access from keystroke routines }
++         defer := true;      { queue primitives, don't change screen }
++         svrow := row;
++         svcol := col;
++         svfld := curfield;
+   
+!         if isdata then
+!             datakey(lch)            { data character }
+!         else
+!             qcmdsignal(lch);        { queued command signal }
+   
++         { restore the state ready for processing of the queued primitives }
++         row := svrow;
++         col := svcol;
++         curfield := svfld;
++         with field[curfield] do
++         begin
++             boxtop := fldtop;  boxbottom := fldbottom;
++             boxleft := fldleft;  boxright := fldright
++         end;
++         defer := false      { primitives change screen again }
++     end;
+   
++     pcode := qpcode[1];
++     ppars[1] := qpar1[1];
++     ppars[2] := qpar2[1];
++     nqueued := nqueued - 1;
++     for i := 1 to nqueued do
++     begin
++         qpcode[i] := qpcode[i+1];
++         qpar1[i] := qpar1[i+1];
++         qpar2[i] := qpar2[i+1];
++     end;
++  
++     { now it's safe to call the semantic routines properly }
++     case pcode of
++  
++     star:   tcharacter(ppars[1]);
++     capa:   ttoken(ppars[1]);
++     capb:   tsetcursor(ppars[1], ppars[2]);
++     capc:   tsetmode(ppars[1], ppars[2]);
++     capd:   terasetoright;
++     cape:   tinsertspace(ppars[1]);
++     capf:   tdeletechar(ppars[1]);
++     capg:   teraseprev(ppars[1]);
++     caph:   tinsertline(ppars[1]);
++     capi:   tdeleteline(ppars[1]);
++     capj:   tappendline;
++     capk:   tsplitline;
++     capl:   tsetfield(ppars[1])
++  
++     end   {case}
++ end;  {getprimitive}
++  
++  
+  { startssmp -- negotiate screen management session with terminal }
+  procedure startssmp (var success : boolean;
+                       usertext : chstring);
+  begin
+      initcoding;
+!     UINITSCRN(image, mode);
+   
+      session(0);                 { initialises shared data structure }
+!     { note that in this version we don't put out the user text }
+!     { since the the negotiation is not going to fail! }
+      sendtoken(1);
+   
+!     success := true             { it always works here! }
+  end;  {startssmp }
+   
+   
+***************
+*** 2196,2206 ****
+      scrollup(0, maxrow, 1);
+      setcursor(maxrow, 0);
+      session(1);
+!     resetlink
+  end;  {stopssmp}
+   
+   
+! { ### End of SSMP module ### }
+   
+   
+  { ****************************************************** stdenv ***** }
+--- 2420,2430 ----
+      scrollup(0, maxrow, 1);
+      setcursor(maxrow, 0);
+      session(1);
+!     UENDSCRN
+  end;  {stopssmp}
+   
+   
+! { ### End of local SSMP module ### }
+   
+   
+  { ****************************************************** stdenv ***** }
+***************
+*** 2563,2569 ****
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot open file@n&  ');
+!         putstr(s, stderr);
+          errorexit
+      end;
+      mustopen := fd
+--- 2787,2793 ----
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot open file@n&  ');
+!         putstr(s, stderror);
+          errorexit
+      end;
+      mustopen := fd
+***************
+*** 2583,2589 ****
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot create file@n&');
+!         putstr(s, stderr);
+          errorexit
+      end;
+      mustcreate := fd
+--- 2807,2813 ----
+      begin
+          scopy(name, 1, s, 1);
+          appstring(s, ':  cannot create file@n&');
+!         putstr(s, stderror);
+          errorexit
+      end;
+      mustcreate := fd
+***************
+*** 10155,10161 ****
+          setstring(lin, '*** Curlew can only be u');
+          appstring(lin, 'sed from a terminal whic');
+          appstring(lin, 'h supports SSMP.@n&     ');
+!         putstr(lin, stderr)
+      end
+  end;  {editor}
+   
+--- 10379,10385 ----
+          setstring(lin, '*** Curlew can only be u');
+          appstring(lin, 'sed from a terminal whic');
+          appstring(lin, 'h supports SSMP.@n&     ');
+!         putstr(lin, stderror)
+      end
+  end;  {editor}
+   

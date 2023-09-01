@@ -1,0 +1,5 @@
+#! /bin/sh
+
+ARGV="$@"
+export ARGV
+exec cl2

@@ -1,0 +1,146 @@
+ 
+                    CURLEW -- SUMMARY INFORMATION
+                    =============================
+ 
+You are using a full-screen text editor.  This summary contains 146
+lines of text.  To view it in full, just keep pressing the RETURN key.
+To return to the command prompt, type the letter "n" and press RETURN.
+Full documentation is available in the "Curlew Reference Manual".
+ 
+ 
+BASIC CONTEXT EDITOR COMMANDS
+ 
+  write                 Write file buffer contents to edited file
+  quit                  End the editor session
+  edit myotherfile      Edit a new disk file "myotherfile"
+  view                  Enter full-screen operation
+ 
+Press RETURN to enter the command.  If a filename is given with a
+"write" command the file buffer will be written to the specified file.
+Confirmation will be requested before a "quit" abandons changes made.
+ 
+ 
+FULL-SCREEN OPERATION -- CONTROL KEYS
+ 
+  ^Q insert line          ^A align text           ^Z cursor line start
+  ^W char/line toggle     ^S insert space         ^X cursor text start
+  ^E delete character     ^D delete blanks        ^C cursor text end
+  ^R delete word          ^F previous tab         ^V cursor next word
+  ^T delete line start    ^G home cursor          ^B block toggle
+  ^Y delete line end      ^H cursor left          ^N ins saved text
+  ^U delete line          ^J cursor down          ^M (RETURN) append or
+  ^I next tab             ^K cursor up                split line
+  ^O split line           ^L cursor right
+  ^P combine with next
+ 
+Note: "^Q" means hold down "CTRL" and press "Q" once and release.
+ 
+ 
+FUNCTION KEY DEFAULT SETTINGS
+ 
+  F1  forward half        F11  letter paragraph   F21  assembler tabs
+  F2  forward full        F12  square paragraph   F22  tabs every 4th
+  F3  forward to cursor   F13  outer list item    F23  tabs every 5th
+  F4  backward half       F14  outer list cont'd  F24  tabs every 8th
+  F5  backward full       F15  inner list item    F25  to first line
+  F6  command prompt      F16  inner list cont'd  F26  to last line
+  F7  rescan forward      F17  tidy para (left-j) F27  leftmost window
+  F8  checkpoint          F18  tidy to para end   F28  window left 40
+  F9  refresh image       F19  centre line        F29  window right 40
+  F10 full-screen toggle  F20  right justify line F30  file & location
+ 
+F31...F37 are initially undefined.  For each F-key press ESC once then
+the second character once.  For F1...F10 this character is "1", "2",
+"3", ..., "9", "0".  Higher keys are below them: F11 is "ESC"-then-"Q"
+and F24 is "ESC"-then-"F".  Function keys are redefinable using "set".
+ 
+ 
+LINE NUMBER PARAMETERS
+ 
+In full-screen operation, first press F6 ("ESC"-then-"6") to get the
+command prompt.  Press the RETURN key when the parameter is complete.
+ 
+  n       Line n in the file buffer, for example:      563
+  .       The current line (or cursor line).
+  +n      n lines after the current line, example:     +60
+  -n      n lines before the current line, example:    -125
+  $       The last line in the file buffer.
+  #       The top-of-file image line number.
+  /pat/   Next line matching the pattern, example:     /procedure/
+  \pat\   Previous line matching pattern, example:     \function\
+ 
+Patterns are an extension of the "Software Tools" scheme where ?=any,
+%=start-of-line, $=end-of-line, []=char-class, *=closure, @=literal,
+~=case-toggle.  The UNIX (tm) set is available via a "set u+" command.
+ 
+ 
+FULL-SCREEN OPERATION -- BLOCK MODE
+ 
+Block start (or end) is marked by a ^B.  Move the cursor to the other
+end of the block.  The editing keys ^[QWERTYUOPASD], but not RETURN or
+DEL, now operate on the block of text.  For the "character" operations
+the block is a rectangle, for "line" operation the group of lines, for
+"delete word" the serial intermediate text.  ^Q and ^W save lines or a
+character rectangle in block mode; to insert a copy of what you have
+saved press ^N.  Note that RETURN is "start-of-next-line" after ^B.
+ 
+ 
+CONTEXT EDITOR COMMANDS -- LIST ONLY
+ 
+  append, change, copy, delete, edit, exit, filename, format, global,
+  help, insert, keep, move, list, print, prompt, quit, read, set,
+  show, stop, substitute, undo, view, write, xglobal
+ 
+ 
+SET COMMAND -- PROFILE OPTIONS WITH DEFAULTS
+ 
+  a   switch   a+    Append line when RETURN pressed ("a-"=split-line)
+  b   switch   b-    Simple block combine action ("b+"=format-lines)
+  c   switch   c-    Characters overstrike text ("c+"=insertion)
+  d   switch   d-    Detab buffer text action ("d+"=expand-to-spaces)
+  e   switch   e-    Entab written text action ("e+"=compress-to-tabs)
+  f   n/def/         Function key definitions, already listed
+  h   switch   h+    Horiz tab keys ("h-"=tab-insert-&-previous-word)
+  i   switch   i+    Automatic image updating ("i-"=await-request)
+  j   switch   j+    "format" justifies both margins ("j-"=left-only)
+  l   switch   l+    Loop search action over buffer ("l-"=do-not-loop)
+  m   number   m2    Controls mask allows HT and DEL (0=none, 4=all)
+  n   switch   n-    Anycase toggle is off ("n+"=anycase-toggle-on)
+  o   number   o0    "format" overall text offset
+  p   number   p0    "format" default paragraph first line indent
+  r   number   r7    Alternative rendition is reverse (0=def, 1=bold)
+  s   number   s1    "format" default sentence separation (0...4)
+  t   tabdef   t*8   Set tabulation stop columns every 8th column
+  u   switch   u-    "Software Tools" metacharacters ("u+"=UNIX)
+  v   switch   v-    No automatic view command on entry to editor
+  w   number   w70   "format" default paragraph width
+  x   number   x0    Left margin offset in full-screen operation
+  y   number   y0    Vertical cursor movement wraps (>0=scroll)
+  z   switch   z+    Word wrap -- "power-typing" -- action ("z-"=off)
+ 
+  Use the "show" command to see the current settings of profile
+  parameters and function key strings.  Use "set" to change them.
+ 
+ 
+RESTRICTIONS
+ 
+  Curlew is a text editor, suitable for editing natural language text,
+  program source and data, and similar tasks.  It is not suitable for
+  files containing binary data such as executable object programs or
+  encoded data produced by some applications packages.
+ 
+  Curlew cannot handle files with more than 16,383 lines of information,
+  nor can it handle files in which any line contains more than 509
+  characters.  All versions of Curlew will refuse to "write" a file once
+  the 16,383 lines limit has been passed.
+ 
+  Users of files whose sharing attributes allow concurrent write
+  (modify) access by more than one user (or process) should be aware
+  that Curlew does not lock (reserve) the file for the duration of the
+  editing session.
+ 
+ 
+ORIGIN
+ 
+  Curlew was designed and implemented at the Computing Laboratory of
+  the University of Newcastle upon Tyne, Newcastle NE1 7RU, England.

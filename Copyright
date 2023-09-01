@@ -1,0 +1,32 @@
+{ ******************************************************************* }
+{ *                                                                 * }
+{ *                           C U R L E W                           * }
+{ *                                                                 * }
+{ *   A portable full-screen editor intended for use over a data    * }
+{ *   communications network.  The full-screen user interface is    * }
+{ *   derived from that of the old NUMAC Screen Editor, "sc".       * }
+{ *   The network virtual terminal support is that of the "The      * }
+{ *   Simple Screen Management Protocol" (United Kingdom Joint      * }
+{ *   Network Team, July 1985).                                     * }
+{ *                                                                 * }
+{ *   The context editor and file buffer management facilities      * }
+{ *   provided were inspired by and are modelled on "edit", by      * }
+{ *   B.W.Kernighan and P.J.Plauger.  See the book "Software Tools  * }
+{ *   in Pascal" (Addison-Wesley, 1981).                            * }
+{ *                                                                 * }
+{ *   Screen editor code, SSMP network virtual terminal support,    * }
+{ *   and other extensions by Alan Hunter, Computing Laboratory,    * }
+{ *   University of Newcastle upon Tyne.                            * }
+{ *                                                                 * }
+{ *   This is PUBLIC DOMAIN SOFTWARE, by which is meant that it     * }
+{ *   may be copied and used by individuals or institutions but     * }
+{ *   any rights of commercial exploitation are retained by the     * }
+{ *   University of Newcastle upon Tyne.                            * }
+{ *                                                                 * }
+{ *   CURLEW screen editor and SSMP virtual terminal coding is      * }
+{ *     copyright (1987) by the University of Newcastle upon Tyne.  * }
+{ *   The original source of the Software Tools Pascal routines is  * }
+{ *     copyright (1981) by Bell Telephone Laboratories,            * }
+{ *       Incorporated, and Whitesmiths, Ltd.                       * }
+{ *                                                                 * }
+{ ******************************************************************* }

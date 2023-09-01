@@ -1,0 +1,134 @@
+To install curlew, the following steps are recommended:
+
+1)   Curlew  is  distributed  as  25 files that should be concatenated
+     then fed through the bourne shell or the program unshar.  If  you
+     have not already done this, then this the first of these files.
+
+2)   Find  out  how  to link a pascal main program with C subroutines.
+     Modify the line beginning SEDSTRING in the makefile so  that  the
+     include   files   containing   external  definitions  are  edited
+     correctly for your system.  Curlew is distributed for BSD pascal,
+     with external definitions flagged with the directive  "external;"
+     rather  like  a  forward  declaration,  and taken from a separate
+     header file.
+
+     Other  examples  have  been  a Whitechappel MG1, which needed the
+     keyword  "IMPORT"  before  the  word  procedure,  and  an  Encore
+     Multimax   that   used  the  directive  "nonpascal;"  instead  of
+     "external;".  The Whitechappel also required  the  source  to  be
+     passed  through  the  C  preprocessor,  as it is unable to handle
+     include directives.  For these systems the line in  the  makefile
+     was as follows:-
+
+     For Whitechappel:
+     SEDSTRING = -e "s/external;//" -e "s/procedure/IMPORT procedure/"
+
+     For Mutlimax:
+     SEDSTRING = "s/external;/nonpascal;/"
+
+3)   Also make the following alterations to the makefile as needed.
+
+     HELP Set  up the directory for curlew's help file.  The file name
+          will be "curlew.help" in this directory.
+
+     SEDSTRING
+          See above.
+
+     PCFLAGS
+          This string is passed to the pascal compiler as an argument.
+          when compiling a single .p file to a .o file.
+
+     LINKFLAGS
+          This  string  is  given  to the program used to link edit .o
+          files (typically either cc or pc - see below).
+
+     LIBS This string specifies the subroutine libraries to be linked,
+          if  these  are  needed  on  the  command  line.  For a local
+          version (see LOCAL/REMOTE below), this must also include the
+          termcap library (-ltermcap).
+
+     PASCAL
+          If  your  command  "pc <Your flags as above> <pascal source>
+          will not generate an object  (.o)  file,  then  change  this
+          string  from  "pc"  to be the name of a command that will do
+          this.  An example of what was used for the Whitechappel  MG1
+          with  the  lattice  pascal  compiler  is  included with this
+          release in the file pc.mg1.
+
+     LINK If  the  pc  command with arguments as specified above (LIBS
+          and PCFLAGS) will not create an executable file, then modify
+          this string.  (The -o flag is passed, together with  a  file
+          name).
+
+     LOCAL/REMOTE
+          Depending  on whether you are generating a version of curlew
+          that will drive the terminal using  termcap,  or  SSMP  then
+          un-comment  one of the next groups of four lines.  Note that
+          the local terminal handling  primitives  in  tpprim.c  could
+          make better use of termcap.  They work adequately on the Sun
+          and  Whitechappel,  but  do  not  scroll properly unless the
+          terminal provides insert line/delete line.
+
+          #REMOTE LOCREM = REMOTE
+          #REMOTE PRIMS = stprim.o
+          #REMOTE HEADS = st.h
+          #REMOTE BASE = bsd
+
+          #LOCAL  LOCREM = LOCAL
+          #LOCAL  PRIMS = stprim.o tpprim.o
+          #LOCAL  HEADS = st.h tp.h
+          #LOCAL  BASE = sun
+
+4)   If  your  system needs any special #defines etc then put these in
+     the file local.h.  You will probably only find out  on  a  second
+     pass,  having  discovered  some errors.  Currently we do this for
+     our UTS test system.
+
+5)   Run  the  make  command  to compile curlew.  Typical output is as
+     follows (This example is produced by a complete re-compilation on
+     the Encore Multimax):-
+
+              pc -berkeley -c typedefs.p
+              pc -berkeley -o typedefs typedefs.o
+              typedefs >st.typ.h
+              chmod a-w st.typ.h
+              sed "s/external;/nonpascal;/" <typecheck1.h >tc.h
+              pc -berkeley -c typecheck1.p
+              cc -c typecheck2.c
+              pc -berkeley -o typecheck typecheck1.o typecheck2.o
+              typecheck
+     st.typ.h verification ok
+              touch typecheck.ok
+              cc -c -DHELPDIR=\"/usr/local/lib\" -DREMOTE stprim.c
+              sed "s/external;/nonpascal;/" <st-bsd.h >st.h
+              pc -berkeley -c cl-bsd.p
+              pc -berkeley -o cl2 cl-bsd.o stprim.o
+              tbl curlew.t >curlew.l
+              touch all
+
+6)   Lastly  if everything is ok, the command "make install" will copy
+     curlew to the appropriate places in your system, and "make clean"
+     will remove .o files and other files that are no longer needed.
+
+One  of  the biggest problems when installing curlew on other machines
+has been the allocation of differing sizes  to  various  subranges  of
+integer.   This has been eased by the introduction of the typedefs and
+typecheck programs, but if you get  unexpected  catastrophic  run-time
+errors, it would be well worth re-checking the contents of st.typ.h.
+
+If  the  typecheck  program reports errors, and causes the makefile to
+terminate early, then check the contents of st.typ.h,  and  read  your
+local  documentation  to  find  out how to link together Pascal and C.
+You may need to  modify  st.typ.h  by  hand,  and  dispense  with  the
+typedefs program.
+
+If  problems  are  found  with  the  installation  of Curlew on a Unix
+system, I can be contacted at the address given below.   The  original
+author of Curlew is Alan Hunter (Alan_Hunter at the same address).
+
+Chris Ritson
+
+JANET: Chris_Ritson@uk.ac.newcastle                  PHONE: +44 91 232 9233
+UUCP : ...!ukc!newcastle.ac.uk!Chris_Ritson
+ARPA : Chris_Ritson%newcastle.ac.uk@nss.cs.ucl.ac.uk
+SNAIL: Computing Laboratory, University of Newcastle upon Tyne, UK, NE1 7RU
